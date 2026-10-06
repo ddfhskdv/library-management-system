@@ -1,0 +1,7 @@
+/target/
+/data/
+/backups/
+.env
+.env.*
+!.env.example
+*.log

@@ -1,0 +1,49 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Backend feature additions. Depends on FEAT-001 (GlobalExceptionHandler fixes must be in place so IllegalArgumentException/IllegalStateException return correct HTTP codes). All backend-only changes: max-books enforcement in issue workflow, finePaid field on Transaction, pay-fine endpoint, member transaction history endpoint, member status toggle endpoint, category list endpoint, book demand tracking (issueCount field + popular books endpoint), and renewal endpoint. The overdue GET endpoint already exists in TransactionController — no action needed for that item.",
+  "status": "completed",
+  "steps": [
+    "1. src/main/java/com/college/library/entity/Transaction.java: Add field 'private boolean finePaid = false;' after the 'remarks' field. Add getter: 'public boolean isFinePaid() { return finePaid; }' Add setter: 'public void setFinePaid(boolean finePaid) { this.finePaid = finePaid; }'",
+    "2. src/main/java/com/college/library/entity/Book.java: Add field 'private int issueCount = 0;' after the availableCopies field. Add getter: 'public int getIssueCount() { return issueCount; }' Add setter: 'public void setIssueCount(int issueCount) { this.issueCount = issueCount; }'",
+    "3. src/main/java/com/college/library/dto/MemberStatusRequest.java: Create new file in package com.college.library.dto. Content: public class MemberStatusRequest with field 'private Boolean active;', getter 'public Boolean getActive() { return active; }', setter 'public void setActive(Boolean active) { this.active = active; }'",
+    "4. src/main/java/com/college/library/repository/TransactionRepository.java: Add two derived query methods: (a) 'List<Transaction> findByMemberIdOrderByCreatedAtDesc(Long memberId);' — Spring Data derives this; no @Query needed. (b) 'long countByMemberIdAndStatus(Long memberId, String status);' — also derived automatically.",
+    "5. src/main/java/com/college/library/repository/BookRepository.java: Add two new methods: (a) '@Query(\"SELECT DISTINCT b.category FROM Book b WHERE b.category IS NOT NULL AND b.category <> '''' ORDER BY b.category\") List<String> findDistinctCategories();' — import org.springframework.data.jpa.repository.Query if not already imported (it is already imported). (b) 'List<Book> findTop5ByOrderByIssueCountDesc();' — Spring Data derived method, no @Query needed.",
+    "6. src/main/java/com/college/library/service/TransactionService.java: Add three new method signatures to the interface: 'Transaction payFine(Long transactionId);', 'List<Transaction> getTransactionsByMember(Long memberId);', 'Transaction renewTransaction(Long transactionId, int days);'",
+    "7. src/main/java/com/college/library/service/BookService.java: Add two new method signatures: 'List<String> getCategories();', 'List<Book> getPopularBooks();'",
+    "8. src/main/java/com/college/library/service/MemberService.java: Add one new method signature: 'Member toggleMemberStatus(Long id, Boolean active);'",
+    "9. src/main/java/com/college/library/service/impl/TransactionServiceImpl.java — modify issueBook(): After the member.getActive() check and before the book fetch, add: 'long activeCount = transactionRepository.countByMemberIdAndStatus(member.getId(), \"ISSUED\"); if (activeCount >= member.getMaxAllowedBooks()) { throw new IllegalStateException(\"Member has reached the maximum allowed books limit of \" + member.getMaxAllowedBooks() + \".\"); }' Also after 'book.markIssued();' and before 'bookRepository.save(book);', add: 'book.setIssueCount(book.getIssueCount() + 1);' so the count is persisted in the same save call.",
+    "10. src/main/java/com/college/library/service/impl/TransactionServiceImpl.java — add payFine(): '@Override public Transaction payFine(Long transactionId) { Transaction tx = transactionRepository.findById(transactionId).orElseThrow(() -> new ResourceNotFoundException(\"Transaction not found with ID: \" + transactionId)); if (!\"RETURNED\".equalsIgnoreCase(tx.getStatus())) { throw new IllegalStateException(\"Cannot pay fine: transaction is not yet returned.\"); } if (tx.isFinePaid()) { throw new IllegalStateException(\"Fine has already been paid for this transaction.\"); } tx.setFinePaid(true); return transactionRepository.save(tx); }'",
+    "11. src/main/java/com/college/library/service/impl/TransactionServiceImpl.java — add getTransactionsByMember(): '@Override @Transactional(readOnly = true) public List<Transaction> getTransactionsByMember(Long memberId) { return transactionRepository.findByMemberIdOrderByCreatedAtDesc(memberId); }'",
+    "12. src/main/java/com/college/library/service/impl/TransactionServiceImpl.java — add renewTransaction(): '@Override public Transaction renewTransaction(Long transactionId, int days) { Transaction tx = transactionRepository.findById(transactionId).orElseThrow(() -> new ResourceNotFoundException(\"Transaction not found with ID: \" + transactionId)); if (!\"ISSUED\".equalsIgnoreCase(tx.getStatus())) { throw new IllegalStateException(\"Cannot renew: transaction is not currently issued.\"); } int renewDays = (days > 0) ? days : 7; tx.setDueDate(tx.getDueDate().plusDays(renewDays)); return transactionRepository.save(tx); }'",
+    "13. src/main/java/com/college/library/service/impl/BookServiceImpl.java — add getCategories(): '@Override @Transactional(readOnly = true) public List<String> getCategories() { return bookRepository.findDistinctCategories(); }'",
+    "14. src/main/java/com/college/library/service/impl/BookServiceImpl.java — add getPopularBooks(): '@Override @Transactional(readOnly = true) public List<Book> getPopularBooks() { return bookRepository.findTop5ByOrderByIssueCountDesc(); }'",
+    "15. src/main/java/com/college/library/service/impl/MemberServiceImpl.java — Read the file first to understand the constructor pattern. Add: '@Override public Member toggleMemberStatus(Long id, Boolean active) { Member member = getMemberById(id); member.setActive(active); return memberRepository.save(member); }'",
+    "16. src/main/java/com/college/library/controller/TransactionController.java — add three new endpoint methods: (a) '@PostMapping(\"/{id}/pay-fine\") public ResponseEntity<Transaction> payFine(@PathVariable Long id) { return ResponseEntity.ok(transactionService.payFine(id)); }' (b) '@GetMapping(\"/member/{memberId}\") public ResponseEntity<List<Transaction>> getTransactionsByMember(@PathVariable Long memberId) { return ResponseEntity.ok(transactionService.getTransactionsByMember(memberId)); }' (c) '@PutMapping(\"/{id}/renew\") public ResponseEntity<Transaction> renewTransaction(@PathVariable Long id, @RequestParam(defaultValue=\"7\") int days) { return ResponseEntity.ok(transactionService.renewTransaction(id, days)); }'",
+    "17. src/main/java/com/college/library/controller/BookController.java — add two new endpoints: (a) '@GetMapping(\"/categories\") public ResponseEntity<List<String>> getCategories() { return ResponseEntity.ok(bookService.getCategories()); }' — needs 'import java.util.List;' which is already there. (b) '@GetMapping(\"/popular\") public ResponseEntity<List<Book>> getPopularBooks() { return ResponseEntity.ok(bookService.getPopularBooks()); }'",
+    "18. src/main/java/com/college/library/controller/MemberController.java — add: 'import com.college.library.dto.MemberStatusRequest;' at top. Then add method: '@PutMapping(\"/{id}/status\") public ResponseEntity<Member> toggleMemberStatus(@PathVariable Long id, @RequestBody MemberStatusRequest req) { Member updated = memberService.toggleMemberStatus(id, req.getActive()); return ResponseEntity.ok(updated); }'"
+  ],
+  "acceptance_criteria": [
+    "mvn compile succeeds with BUILD SUCCESS",
+    "mvn test passes all 3 existing tests",
+    "Transaction.java has finePaid field with isFinePaid() getter and setFinePaid() setter",
+    "Book.java has issueCount field with getter and setter",
+    "MemberStatusRequest.java exists in src/main/java/com/college/library/dto/",
+    "TransactionRepository has findByMemberIdOrderByCreatedAtDesc and countByMemberIdAndStatus",
+    "BookRepository has findDistinctCategories() @Query method and findTop5ByOrderByIssueCountDesc()",
+    "TransactionService interface declares payFine, getTransactionsByMember, renewTransaction",
+    "BookService interface declares getCategories and getPopularBooks",
+    "MemberService interface declares toggleMemberStatus",
+    "All new service methods are implemented in the impl classes",
+    "TransactionController has /pay-fine, /member/{memberId}, and /renew endpoints",
+    "BookController has /categories and /popular endpoints",
+    "MemberController has /{id}/status endpoint",
+    "issueBook() in TransactionServiceImpl enforces maxAllowedBooks and increments issueCount before save"
+  ],
+  "verification": [
+    "Run: mvn compile -f \"c:\\Users\\hp\\OneDrive\\Desktop\\library management\\pom.xml\" — expect BUILD SUCCESS",
+    "Run: mvn test -f \"c:\\Users\\hp\\OneDrive\\Desktop\\library management\\pom.xml\" — all 3 existing tests pass"
+  ],
+  "blocked_reason": null,
+  "findings": "All 18 steps implemented successfully. mvn compile: BUILD SUCCESS (32 source files). mvn test: 3/3 tests pass. finePaid added to Transaction, issueCount added to Book, MemberStatusRequest DTO created, TransactionRepository/BookRepository extended with derived queries, all service interfaces updated, all impl classes updated (including maxAllowedBooks enforcement and issueCount increment in issueBook), and new controller endpoints added: /api/transactions/{id}/pay-fine, /api/transactions/member/{memberId}, /api/transactions/{id}/renew, /api/books/categories, /api/books/popular, /api/members/{id}/status."
+}

@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-004",
+  "type": "chore",
+  "description": "Integration polish and cross-FEAT seam fixes. Runs last because it can only be verified once FEAT-001 through FEAT-003 are complete. Fixes: (1) ensures DOMContentLoaded init wires all new functions, (2) confirms issueCount increment is placed before the bookRepository.save() call, (3) fixes the nav bar Issue Book button onclick, (4) verifies the quickReturn() async fix doesn't break the dashboard Return links. These are small targeted corrections that address issues only visible when all FEATs are assembled together.",
+  "status": "completed",
+  "steps": [
+    "1. src/main/resources/static/js/app.js — DOMContentLoaded block: Read the current init block and ensure ALL of these calls are present (add missing ones): fetchDashboardStats(), fetchAllBooks(), fetchAllMembers(), fetchAllTransactions(), loadCategories(). Also ensure the dark mode init: 'if (localStorage.getItem(\"darkMode\") === \"dark\") { document.documentElement.classList.add(\"dark\"); }' followed by updateDarkModeIcon(). The return date default code already there should be kept.",
+    "2. src/main/java/com/college/library/service/impl/TransactionServiceImpl.java — Verify the issueBook() method sets book.setIssueCount(book.getIssueCount() + 1) BEFORE the bookRepository.save(book) call. If FEAT-002 placed it after the save, move it to before the save. This ensures the DB row includes the updated count in the same transaction.",
+    "3. src/main/resources/static/js/app.js — Verify the switchTab function still calls loadPopularBooks() and updateOutstandingFines() when switching to dashboard. Specifically: inside switchTab(), in the 'dashboard' branch, after fetchDashboardStats() call, also call loadPopularBooks() and updateOutstandingFines() if they aren't already triggered by fetchDashboardStats() itself. (fetchDashboardStats should call both — verify the call chain is complete.)",
+    "4. src/main/resources/static/js/app.js — dashboard-recent-table quickReturn links: These call quickReturn(tx.id). Since quickReturn is now async, the onclick='quickReturn(...)' in the dashboard table HTML still works — async functions are callable from onclick. No change needed, but verify the function signature is 'async function quickReturn(transactionId)' and not a non-async version.",
+    "5. Final verification: Run mvn compile and mvn test. Record BUILD SUCCESS and test results in this FEAT's findings field."
+  ],
+  "acceptance_criteria": [
+    "DOMContentLoaded calls fetchDashboardStats, fetchAllBooks, fetchAllMembers, fetchAllTransactions, loadCategories",
+    "Dark mode preference loaded on startup",
+    "issueCount incremented before bookRepository.save(book) in issueBook()",
+    "Dashboard switchTab branch calls loadPopularBooks() and updateOutstandingFines() (either directly or via fetchDashboardStats)",
+    "quickReturn is async",
+    "mvn compile BUILD SUCCESS",
+    "mvn test all 3 tests pass"
+  ],
+  "verification": [
+    "Run: mvn compile -f \"c:\\Users\\hp\\OneDrive\\Desktop\\library management\\pom.xml\" — expect BUILD SUCCESS",
+    "Run: mvn test -f \"c:\\Users\\hp\\OneDrive\\Desktop\\library management\\pom.xml\" — all 3 existing tests pass"
+  ],
+  "blocked_reason": null,
+  "findings": "Step 1: DOMContentLoaded already had all required calls (fetchDashboardStats, fetchAllBooks, fetchAllMembers, fetchAllTransactions, loadCategories) and dark mode init with updateDarkModeIcon — no change needed. Step 2: issueCount set BEFORE bookRepository.save(book) in TransactionServiceImpl.issueBook() — already correct, no change needed. Step 3: switchTab dashboard branch was missing updateOutstandingFines() — added call after fetchDashboardStats() and loadDashboardRecentTable(). fetchDashboardStats() already calls loadPopularBooks() so that criteria was met. Step 4: quickReturn already declared as 'async function quickReturn(transactionId)' — no change needed. Build: mvn compile — BUILD SUCCESS. Tests: mvn test — Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, BUILD SUCCESS."
+}

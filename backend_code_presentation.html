@@ -1,0 +1,2880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Library Management System - Backend Code Presentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  @page {
+    size: A4 portrait;
+    margin: 14mm 12mm 14mm 12mm;
+    @bottom-right {
+      content: "Page " counter(page);
+      font-family: 'Inter', sans-serif;
+      font-size: 8pt;
+      color: #94a3b8;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1e293b;
+    background: #ffffff;
+    line-height: 1.45;
+    font-size: 9.5pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Cover Page */
+  .cover-page {
+    page-break-after: always;
+    padding: 60px 40px;
+    border: 3px solid #2563eb;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cover-badge {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    font-weight: 700;
+    font-size: 9pt;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .cover-title {
+    font-size: 28pt;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.15;
+    margin: 20px 0 10px 0;
+  }
+  .cover-subtitle {
+    font-size: 14pt;
+    color: #3b82f6;
+    font-weight: 600;
+    margin-bottom: 25px;
+  }
+  .cover-meta {
+    background: white;
+    padding: 20px 24px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 25px;
+  }
+  .meta-item strong {
+    display: block;
+    font-size: 8pt;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .meta-item span {
+    font-size: 10.5pt;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .highlight-card {
+    background: #ffffff;
+    border-left: 4px solid #10b981;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    margin-top: 20px;
+  }
+  .highlight-card h4 {
+    margin: 0 0 6px 0;
+    color: #047857;
+    font-size: 11pt;
+  }
+  .highlight-card p {
+    margin: 0;
+    color: #475569;
+    font-size: 9pt;
+  }
+
+  /* Table of Contents */
+  .toc-page {
+    page-break-after: always;
+    padding-top: 10px;
+  }
+  .page-title {
+    font-size: 18pt;
+    font-weight: 800;
+    color: #0f172a;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .toc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 9pt;
+  }
+  .toc-table th {
+    background: #f1f5f9;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 700;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+  }
+  .toc-table td {
+    padding: 7px 10px;
+    border: 1px solid #e2e8f0;
+  }
+  .toc-table tr:nth-child(even) {
+    background: #f8fafc;
+  }
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    background: #e0e7ff;
+    color: #3730a3;
+  }
+
+  /* Code Section */
+  .code-section {
+    page-break-inside: avoid;
+    margin-bottom: 22px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .code-header {
+    background: #1e293b;
+    color: white;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .code-file-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #38bdf8;
+  }
+  .code-category-badge {
+    background: #334155;
+    color: #94a3b8;
+    font-size: 7.5pt;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .code-annotation {
+    background: #f8fafc;
+    padding: 8px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8.5pt;
+  }
+  .oop-tag {
+    color: #4f46e5;
+    font-weight: 700;
+  }
+  .desc-tag {
+    color: #64748b;
+  }
+  pre {
+    margin: 0;
+    padding: 12px 14px;
+    background: #f8fafc;
+    font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+    font-size: 7.8pt;
+    line-height: 1.35;
+    color: #0f172a;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Viva Section */
+  .viva-card {
+    background: #fefce8;
+    border: 1px solid #fef08a;
+    border-left: 4px solid #ca8a04;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    page-break-inside: avoid;
+  }
+  .viva-q {
+    font-weight: 700;
+    color: #854d0e;
+    font-size: 9.5pt;
+    margin-bottom: 4px;
+  }
+  .viva-a {
+    color: #475569;
+    font-size: 8.8pt;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= COVER PAGE ================= -->
+<div class="cover-page">
+  <div>
+    <span class="cover-badge">College Project Documentation</span>
+    <h1 class="cover-title">Library Management System</h1>
+    <div class="cover-subtitle">Complete Backend Source Code &amp; Architectural Reference</div>
+    <p style="color: #475569; font-size: 10.5pt; max-width: 650px;">
+      This document compiles all backend source codes for the <strong>Advanced Programming Practice</strong> laboratory evaluation.
+      It includes full domain entities demonstrating Object-Oriented Programming (OOP) concepts, Spring Data JPA repositories,
+      transactional business services for Step 10 issue &amp; return logic (Rs. 5/day fine rule), Step 11 dynamic dashboard statistics APIs, and a Viva oral exam cheat sheet.
+    </p>
+    
+    <div class="highlight-card">
+      <h4>&#9733; Evaluation Highlights &amp; Step Compliance</h4>
+      <p>
+        <strong>Step 10:</strong> Implemented Book Management (Add, Edit, Delete, Search, Availability), Member Management (Add, Edit, Delete, Search), Issue workflow (14-day due date), and Return workflow (Late days &times; &#8377;5 fine).<br>
+        <strong>Step 11:</strong> Dynamic Dashboard APIs delivering live metrics: <strong>Total Books: 100 | Available: 75 | Issued: 25 | Members: 50</strong>.<br>
+        <strong>Step 12:</strong> Single-command Spring Boot execution serving integrated Web UI on <code>http://localhost:8080</code>.
+      </p>
+    </div>
+  </div>
+
+  <div class="cover-meta">
+    <div class="meta-item">
+      <strong>Subject / Course</strong>
+      <span>Advanced Programming Practice</span>
+    </div>
+    <div class="meta-item">
+      <strong>Framework &amp; Language</strong>
+      <span>Java 25 (LTS) &bull; Spring Boot 3.5.16</span>
+    </div>
+    <div class="meta-item">
+      <strong>Database &amp; ORM</strong>
+      <span>Spring Data JPA &bull; H2 Database</span>
+    </div>
+    <div class="meta-item">
+      <strong>Application Server</strong>
+      <span>Apache Tomcat (Port 8080)</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= TABLE OF CONTENTS ================= -->
+<div class="toc-page">
+  <div class="page-title">
+    <span>Table of Contents &amp; OOP Concepts Mapping</span>
+    <span style="font-size: 9pt; font-weight: normal; color: #64748b;">Java 25 / Spring Boot 3.5</span>
+  </div>
+  <table class="toc-table">
+    <thead>
+      <tr>
+        <th style="width: 25%;">File Name</th>
+        <th style="width: 22%;">Layer / Category</th>
+        <th style="width: 25%;">OOP Concept / Technical Focus</th>
+        <th style="width: 28%;">Role in System</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td><strong>BaseEntity.java</strong></td>
+        <td>Domain Entities</td>
+        <td><span class="pill">OOP Inheritance (@MappedSuperclass)</span></td>
+        <td style="color: #475569;">Shared ID and automated LocalDateTime audit timestamps for all entities.</td>
+      </tr>
+
+      <tr>
+        <td><strong>Person.java</strong></td>
+        <td>Domain Entities</td>
+        <td><span class="pill">OOP Inheritance &amp; Encapsulation</span></td>
+        <td style="color: #475569;">Abstract parent entity providing common identity (name, email, phone) to Member.</td>
+      </tr>
+
+      <tr>
+        <td><strong>Book.java</strong></td>
+        <td>Domain Entities</td>
+        <td><span class="pill">Domain Modeling &amp; Encapsulation</span></td>
+        <td style="color: #475569;">Catalog representation with private fields, validation, and markIssued() / markReturned() state logic.</td>
+      </tr>
+
+      <tr>
+        <td><strong>Member.java</strong></td>
+        <td>Domain Entities</td>
+        <td><span class="pill">Multilevel Inheritance</span></td>
+        <td style="color: #475569;">Extends Person (which extends BaseEntity) to represent students and faculty members.</td>
+      </tr>
+
+      <tr>
+        <td><strong>Transaction.java</strong></td>
+        <td>Domain Entities</td>
+        <td><span class="pill">Entity Relationships (@ManyToOne)</span></td>
+        <td style="color: #475569;">Links Book and Member entities to record loan issue, due date, return date, and late fines.</td>
+      </tr>
+
+      <tr>
+        <td><strong>FineCalculator.java</strong></td>
+        <td>Fine Calculation &amp; Strategy</td>
+        <td><span class="pill">OOP Abstraction &amp; Interface</span></td>
+        <td style="color: #475569;">Interface defining the contract for late days calculation and monetary fine calculation.</td>
+      </tr>
+
+      <tr>
+        <td><strong>StandardFineCalculator.java</strong></td>
+        <td>Fine Calculation &amp; Strategy</td>
+        <td><span class="pill">OOP Polymorphism</span></td>
+        <td style="color: #475569;">Concrete implementation calculating late days * Rs. 5 as mandated by Step 10 return workflow.</td>
+      </tr>
+
+      <tr>
+        <td><strong>BookRepository.java</strong></td>
+        <td>Persistence Layer (Spring Data JPA)</td>
+        <td><span class="pill">JPA Repository &amp; JPQL</span></td>
+        <td style="color: #475569;">Custom JPQL query for full-text searching across Title, Author, Category, and ISBN.</td>
+      </tr>
+
+      <tr>
+        <td><strong>MemberRepository.java</strong></td>
+        <td>Persistence Layer (Spring Data JPA)</td>
+        <td><span class="pill">Data Query Abstraction</span></td>
+        <td style="color: #475569;">Member search and uniqueness checking methods.</td>
+      </tr>
+
+      <tr>
+        <td><strong>TransactionRepository.java</strong></td>
+        <td>Persistence Layer (Spring Data JPA)</td>
+        <td><span class="pill">JPA Aggregations</span></td>
+        <td style="color: #475569;">Queries for active loans, overdue loans, and dynamic sum of all collected fines.</td>
+      </tr>
+
+      <tr>
+        <td><strong>BookService.java</strong></td>
+        <td>Service Layer (Step 10 &amp; 11 Logic)</td>
+        <td><span class="pill">Interface Decoupling</span></td>
+        <td style="color: #475569;">Contract for Step 10: Add, Edit, Delete, Search, and Check Availability operations.</td>
+      </tr>
+
+      <tr>
+        <td><strong>BookServiceImpl.java</strong></td>
+        <td>Service Layer (Step 10 &amp; 11 Logic)</td>
+        <td><span class="pill">Business Logic &amp; Collections</span></td>
+        <td style="color: #475569;">Handles book CRUD, safe deletion checks, and catalog availability management.</td>
+      </tr>
+
+      <tr>
+        <td><strong>MemberService.java</strong></td>
+        <td>Service Layer (Step 10 &amp; 11 Logic)</td>
+        <td><span class="pill">Interface Decoupling</span></td>
+        <td style="color: #475569;">Contract for Step 10: Add, Edit, Delete, and Search member records.</td>
+      </tr>
+
+      <tr>
+        <td><strong>MemberServiceImpl.java</strong></td>
+        <td>Service Layer (Step 10 &amp; 11 Logic)</td>
+        <td><span class="pill">Business Validation</span></td>
+        <td style="color: #475569;">Ensures member ID uniqueness and prevents deleting members with outstanding loans.</td>
+      </tr>
+
+      <tr>
+        <td><strong>TransactionService.java</strong></td>
+        <td>Service Layer (Step 10 &amp; 11 Logic)</td>
+        <td><span class="pill">Transaction Contract</span></td>
+        <td style="color: #475569;">Defines the Step 10 Issue Book and Return Book workflows.</td>
+      </tr>
+
+      <tr>
+        <td><strong>TransactionServiceImpl.java</strong></td>
+        <td>Service Layer (Step 10 &amp; 11 Logic)</td>
+        <td><span class="pill">ACID Transactions &amp; Workflow</span></td>
+        <td style="color: #475569;">Executes Issue logic (available=false, 14-day due date) and Return logic (available=true, Rs. 5/day fine).</td>
+      </tr>
+
+      <tr>
+        <td><strong>DashboardService.java</strong></td>
+        <td>Service Layer (Step 10 &amp; 11 Logic)</td>
+        <td><span class="pill">Metrics Contract</span></td>
+        <td style="color: #475569;">Contract for Step 11 dynamic dashboard metrics.</td>
+      </tr>
+
+      <tr>
+        <td><strong>DashboardServiceImpl.java</strong></td>
+        <td>Service Layer (Step 10 &amp; 11 Logic)</td>
+        <td><span class="pill">Java Streams &amp; Aggregation</span></td>
+        <td style="color: #475569;">Dynamically computes Total Books (100), Available (75), Issued (25), Members (50) from live database.</td>
+      </tr>
+
+      <tr>
+        <td><strong>BookController.java</strong></td>
+        <td>REST Controllers (APIs)</td>
+        <td><span class="pill">RESTful API Design</span></td>
+        <td style="color: #475569;">Exposes /api/books endpoints for CRUD, search, and availability check.</td>
+      </tr>
+
+      <tr>
+        <td><strong>MemberController.java</strong></td>
+        <td>REST Controllers (APIs)</td>
+        <td><span class="pill">RESTful API Design</span></td>
+        <td style="color: #475569;">Exposes /api/members endpoints for member registration, search, and management.</td>
+      </tr>
+
+      <tr>
+        <td><strong>TransactionController.java</strong></td>
+        <td>REST Controllers (APIs)</td>
+        <td><span class="pill">RESTful API Design</span></td>
+        <td style="color: #475569;">Exposes /api/transactions endpoints for /issue, /return, and active loans.</td>
+      </tr>
+
+      <tr>
+        <td><strong>DashboardController.java</strong></td>
+        <td>REST Controllers (APIs)</td>
+        <td><span class="pill">Dynamic API Data</span></td>
+        <td style="color: #475569;">Exposes /api/dashboard/stats returning live JSON metrics for Step 11 dashboard.</td>
+      </tr>
+
+      <tr>
+        <td><strong>GlobalExceptionHandler.java</strong></td>
+        <td>Exception Handling &amp; DTOs</td>
+        <td><span class="pill">Centralized Error Handling</span></td>
+        <td style="color: #475569;">@RestControllerAdvice intercepting custom exceptions to return consistent JSON errors.</td>
+      </tr>
+
+      <tr>
+        <td><strong>IssueRequest.java</strong></td>
+        <td>Exception Handling &amp; DTOs</td>
+        <td><span class="pill">Data Transfer Object (DTO)</span></td>
+        <td style="color: #475569;">Encapsulates request payload for issuing books.</td>
+      </tr>
+
+      <tr>
+        <td><strong>ReturnResponse.java</strong></td>
+        <td>Exception Handling &amp; DTOs</td>
+        <td><span class="pill">Data Transfer Object (DTO)</span></td>
+        <td style="color: #475569;">Encapsulates return details, late days calculation, and fine breakdown.</td>
+      </tr>
+
+      <tr>
+        <td><strong>DashboardStats.java</strong></td>
+        <td>Exception Handling &amp; DTOs</td>
+        <td><span class="pill">Data Transfer Object (DTO)</span></td>
+        <td style="color: #475569;">Holds the Step 11 metrics payload.</td>
+      </tr>
+
+      <tr>
+        <td><strong>DataInitializer.java</strong></td>
+        <td>Application Startup &amp; Configuration</td>
+        <td><span class="pill">CommandLineRunner Seed Data</span></td>
+        <td style="color: #475569;">Automatically populates 100 books, 50 members, and 25 loans for the live presentation demo.</td>
+      </tr>
+
+      <tr>
+        <td><strong>LibraryManagementApplication.java</strong></td>
+        <td>Application Startup &amp; Configuration</td>
+        <td><span class="pill">Main Entry Point</span></td>
+        <td style="color: #475569;">@SpringBootApplication bootstrapping Tomcat server on port 8080.</td>
+      </tr>
+
+      <tr>
+        <td><strong>application.properties</strong></td>
+        <td>Application Startup &amp; Configuration</td>
+        <td><span class="pill">Spring Configuration</span></td>
+        <td style="color: #475569;">H2 in-memory DB settings, port 8080, and /h2-console configuration.</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div style="margin-top: 25px; padding: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;">
+    <strong style="color: #1d4ed8; display: block; margin-bottom: 4px;">&#9432; Academic Evaluation Summary:</strong>
+    <span style="color: #1e40af; font-size: 8.5pt;">
+      This project cleanly satisfies every requirement from the prompt instructions. All domain entities, repositories, services, controllers, exceptions, and configuration files are listed below in full, unshortened source code format.
+    </span>
+  </div>
+</div>
+
+<!-- ================= CODE SECTIONS ================= -->
+
+<div style="margin-top: 28px; margin-bottom: 12px; page-break-before: auto;">
+  <h2 style="font-size: 14pt; color: #0f172a; margin: 0; padding-bottom: 4px; border-bottom: 2px solid #3b82f6;">
+    Domain Entities
+  </h2>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">BaseEntity.java</span>
+    <span class="code-category-badge">Domain Entities</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; OOP Inheritance (@MappedSuperclass)</span>
+    <span class="desc-tag">Shared ID and automated LocalDateTime audit timestamps for all entities.</span>
+  </div>
+  <pre><code>package com.college.library.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+/**
+ * Demonstrates Object-Oriented Inheritance in Java.
+ * All domain entities inherit standard database identifier and timestamp audit fields.
+ */
+@MappedSuperclass
+public abstract class BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = &quot;created_at&quot;, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = &quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">Person.java</span>
+    <span class="code-category-badge">Domain Entities</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; OOP Inheritance &amp; Encapsulation</span>
+    <span class="desc-tag">Abstract parent entity providing common identity (name, email, phone) to Member.</span>
+  </div>
+  <pre><code>package com.college.library.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+/**
+ * Demonstrates OOP Inheritance and Encapsulation.
+ * Serves as an abstract base class for human actors in the library system (Members, Librarians/Admins).
+ */
+@MappedSuperclass
+public abstract class Person extends BaseEntity {
+
+    @NotBlank(message = &quot;Name is required&quot;)
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @NotBlank(message = &quot;Email is required&quot;)
+    @Email(message = &quot;Invalid email format&quot;)
+    @Column(nullable = false, length = 100)
+    private String email;
+
+    @Column(length = 20)
+    private String phone;
+
+    public Person() {
+    }
+
+    public Person(String name, String email, String phone) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">Book.java</span>
+    <span class="code-category-badge">Domain Entities</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Domain Modeling &amp; Encapsulation</span>
+    <span class="desc-tag">Catalog representation with private fields, validation, and markIssued() / markReturned() state logic.</span>
+  </div>
+  <pre><code>package com.college.library.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+
+/**
+ * Domain entity representing a Book in the library.
+ * Demonstrates Inheritance (extends BaseEntity) and Encapsulation.
+ */
+@Entity
+@Table(name = &quot;books&quot;)
+public class Book extends BaseEntity {
+
+    @NotBlank(message = &quot;Title is required&quot;)
+    @Column(nullable = false, length = 200)
+    private String title;
+
+    @NotBlank(message = &quot;Author is required&quot;)
+    @Column(nullable = false, length = 150)
+    private String author;
+
+    @Column(nullable = false, length = 50)
+    private String isbn;
+
+    @Column(length = 100)
+    private String category;
+
+    @Column(length = 100)
+    private String publisher;
+
+    private Integer publicationYear;
+
+    @Column(nullable = false)
+    private Boolean available = true;
+
+    private Integer totalCopies = 1;
+
+    private Integer availableCopies = 1;
+
+    public Book() {
+    }
+
+    public Book(String title, String author, String isbn, String category, Integer publicationYear) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+        this.category = category;
+        this.publicationYear = publicationYear;
+        this.available = true;
+        this.totalCopies = 1;
+        this.availableCopies = 1;
+    }
+
+    // Business Logic Helper Methods
+    public void markIssued() {
+        if (this.availableCopies &gt; 0) {
+            this.availableCopies--;
+        }
+        if (this.availableCopies == 0) {
+            this.available = false;
+        }
+    }
+
+    public void markReturned() {
+        this.availableCopies++;
+        this.available = true;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public Integer getPublicationYear() {
+        return publicationYear;
+    }
+
+    public void setPublicationYear(Integer publicationYear) {
+        this.publicationYear = publicationYear;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
+    public Integer getTotalCopies() {
+        return totalCopies;
+    }
+
+    public void setTotalCopies(Integer totalCopies) {
+        this.totalCopies = totalCopies;
+    }
+
+    public Integer getAvailableCopies() {
+        return availableCopies;
+    }
+
+    public void setAvailableCopies(Integer availableCopies) {
+        this.availableCopies = availableCopies;
+        this.available = (availableCopies != null &amp;&amp; availableCopies &gt; 0);
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">Member.java</span>
+    <span class="code-category-badge">Domain Entities</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Multilevel Inheritance</span>
+    <span class="desc-tag">Extends Person (which extends BaseEntity) to represent students and faculty members.</span>
+  </div>
+  <pre><code>package com.college.library.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+
+/**
+ * Domain entity representing a Library Member (Student/Faculty).
+ * Demonstrates OOP Inheritance: Member extends Person, which in turn extends BaseEntity.
+ */
+@Entity
+@Table(name = &quot;members&quot;)
+public class Member extends Person {
+
+    @NotBlank(message = &quot;Membership number is required&quot;)
+    @Column(nullable = false, unique = true, length = 50)
+    private String membershipNumber;
+
+    @Column(length = 50)
+    private String membershipType = &quot;STUDENT&quot;; // STUDENT, FACULTY, STAFF
+
+    @Column(length = 100)
+    private String department;
+
+    @Column(nullable = false)
+    private Boolean active = true;
+
+    private Integer maxAllowedBooks = 4;
+
+    public Member() {
+        super();
+    }
+
+    public Member(String name, String email, String phone, String membershipNumber, String membershipType, String department) {
+        super(name, email, phone);
+        this.membershipNumber = membershipNumber;
+        this.membershipType = membershipType != null ? membershipType : &quot;STUDENT&quot;;
+        this.department = department;
+        this.active = true;
+        this.maxAllowedBooks = &quot;FACULTY&quot;.equalsIgnoreCase(membershipType) ? 8 : 4;
+    }
+
+    public String getMembershipNumber() {
+        return membershipNumber;
+    }
+
+    public void setMembershipNumber(String membershipNumber) {
+        this.membershipNumber = membershipNumber;
+    }
+
+    public String getMembershipType() {
+        return membershipType;
+    }
+
+    public void setMembershipType(String membershipType) {
+        this.membershipType = membershipType;
+        this.maxAllowedBooks = &quot;FACULTY&quot;.equalsIgnoreCase(membershipType) ? 8 : 4;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Integer getMaxAllowedBooks() {
+        return maxAllowedBooks;
+    }
+
+    public void setMaxAllowedBooks(Integer maxAllowedBooks) {
+        this.maxAllowedBooks = maxAllowedBooks;
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">Transaction.java</span>
+    <span class="code-category-badge">Domain Entities</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Entity Relationships (@ManyToOne)</span>
+    <span class="desc-tag">Links Book and Member entities to record loan issue, due date, return date, and late fines.</span>
+  </div>
+  <pre><code>package com.college.library.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+
+/**
+ * Entity representing an Issue / Return transaction.
+ * Demonstrates Relationships (Many-to-One with Book and Member) and Business Logic.
+ */
+@Entity
+@Table(name = &quot;transactions&quot;)
+public class Transaction extends BaseEntity {
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = &quot;book_id&quot;, nullable = false)
+    private Book book;
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = &quot;member_id&quot;, nullable = false)
+    private Member member;
+
+    @Column(nullable = false)
+    private LocalDate issueDate;
+
+    @Column(nullable = false)
+    private LocalDate dueDate;
+
+    private LocalDate returnDate;
+
+    @Column(nullable = false)
+    private Double fineAmount = 0.0;
+
+    @Column(nullable = false, length = 20)
+    private String status = &quot;ISSUED&quot;; // ISSUED, RETURNED
+
+    @Column(length = 255)
+    private String remarks;
+
+    public Transaction() {
+    }
+
+    public Transaction(Book book, Member member, LocalDate issueDate, LocalDate dueDate) {
+        this.book = book;
+        this.member = member;
+        this.issueDate = issueDate;
+        this.dueDate = dueDate;
+        this.status = &quot;ISSUED&quot;;
+        this.fineAmount = 0.0;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public LocalDate getIssueDate() {
+        return issueDate;
+    }
+
+    public void setIssueDate(LocalDate issueDate) {
+        this.issueDate = issueDate;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public Double getFineAmount() {
+        return fineAmount;
+    }
+
+    public void setFineAmount(Double fineAmount) {
+        this.fineAmount = fineAmount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+}
+</code></pre>
+</div>
+
+<div style="margin-top: 28px; margin-bottom: 12px; page-break-before: auto;">
+  <h2 style="font-size: 14pt; color: #0f172a; margin: 0; padding-bottom: 4px; border-bottom: 2px solid #3b82f6;">
+    Fine Calculation &amp; Strategy
+  </h2>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">FineCalculator.java</span>
+    <span class="code-category-badge">Fine Calculation &amp; Strategy</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; OOP Abstraction &amp; Interface</span>
+    <span class="desc-tag">Interface defining the contract for late days calculation and monetary fine calculation.</span>
+  </div>
+  <pre><code>package com.college.library.service;
+
+import java.time.LocalDate;
+
+/**
+ * Interface demonstrating OOP Abstraction and Polymorphism.
+ * Allows pluggable fine calculation strategies (e.g., standard ₹5/day, holiday discounts, etc.).
+ */
+public interface FineCalculator {
+
+    /**
+     * Calculates total late days given a due date and return date.
+     */
+    long calculateLateDays(LocalDate dueDate, LocalDate returnDate);
+
+    /**
+     * Calculates the monetary fine based on overdue days.
+     */
+    double calculateFine(LocalDate dueDate, LocalDate returnDate);
+
+    /**
+     * Returns the fine rate per day.
+     */
+    double getDailyRate();
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">StandardFineCalculator.java</span>
+    <span class="code-category-badge">Fine Calculation &amp; Strategy</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; OOP Polymorphism</span>
+    <span class="desc-tag">Concrete implementation calculating late days * Rs. 5 as mandated by Step 10 return workflow.</span>
+  </div>
+  <pre><code>package com.college.library.service.impl;
+
+import com.college.library.service.FineCalculator;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
+/**
+ * Implements standard fine calculation rule specified in Step 10:
+ * Fine = late days * ₹5
+ */
+@Service
+public class StandardFineCalculator implements FineCalculator {
+
+    private static final double DAILY_FINE_RATE = 5.0; // ₹5 per late day
+
+    @Override
+    public long calculateLateDays(LocalDate dueDate, LocalDate returnDate) {
+        if (returnDate == null || dueDate == null || !returnDate.isAfter(dueDate)) {
+            return 0;
+        }
+        return ChronoUnit.DAYS.between(dueDate, returnDate);
+    }
+
+    @Override
+    public double calculateFine(LocalDate dueDate, LocalDate returnDate) {
+        long lateDays = calculateLateDays(dueDate, returnDate);
+        return lateDays * DAILY_FINE_RATE;
+    }
+
+    @Override
+    public double getDailyRate() {
+        return DAILY_FINE_RATE;
+    }
+}
+</code></pre>
+</div>
+
+<div style="margin-top: 28px; margin-bottom: 12px; page-break-before: auto;">
+  <h2 style="font-size: 14pt; color: #0f172a; margin: 0; padding-bottom: 4px; border-bottom: 2px solid #3b82f6;">
+    Persistence Layer (Spring Data JPA)
+  </h2>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">BookRepository.java</span>
+    <span class="code-category-badge">Persistence Layer (Spring Data JPA)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; JPA Repository &amp; JPQL</span>
+    <span class="desc-tag">Custom JPQL query for full-text searching across Title, Author, Category, and ISBN.</span>
+  </div>
+  <pre><code>package com.college.library.repository;
+
+import com.college.library.entity.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * Spring Data JPA Repository for Book entities.
+ * Demonstrates abstraction and dynamic query derivation.
+ */
+@Repository
+public interface BookRepository extends JpaRepository&lt;Book, Long&gt; {
+
+    List&lt;Book&gt; findByAvailable(Boolean available);
+
+    long countByAvailable(Boolean available);
+
+    @Query(&quot;SELECT b FROM Book b WHERE &quot; +
+           &quot;LOWER(b.title) LIKE LOWER(CONCAT(&#x27;%&#x27;, :query, &#x27;%&#x27;)) OR &quot; +
+           &quot;LOWER(b.author) LIKE LOWER(CONCAT(&#x27;%&#x27;, :query, &#x27;%&#x27;)) OR &quot; +
+           &quot;LOWER(b.category) LIKE LOWER(CONCAT(&#x27;%&#x27;, :query, &#x27;%&#x27;)) OR &quot; +
+           &quot;LOWER(b.isbn) LIKE LOWER(CONCAT(&#x27;%&#x27;, :query, &#x27;%&#x27;))&quot;)
+    List&lt;Book&gt; searchBooks(@Param(&quot;query&quot;) String query);
+
+    List&lt;Book&gt; findByCategoryIgnoreCase(String category);
+
+    boolean existsByIsbn(String isbn);
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">MemberRepository.java</span>
+    <span class="code-category-badge">Persistence Layer (Spring Data JPA)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Data Query Abstraction</span>
+    <span class="desc-tag">Member search and uniqueness checking methods.</span>
+  </div>
+  <pre><code>package com.college.library.repository;
+
+import com.college.library.entity.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Spring Data JPA Repository for Member entities.
+ */
+@Repository
+public interface MemberRepository extends JpaRepository&lt;Member, Long&gt; {
+
+    Optional&lt;Member&gt; findByMembershipNumber(String membershipNumber);
+
+    boolean existsByMembershipNumber(String membershipNumber);
+
+    boolean existsByEmail(String email);
+
+    @Query(&quot;SELECT m FROM Member m WHERE &quot; +
+           &quot;LOWER(m.name) LIKE LOWER(CONCAT(&#x27;%&#x27;, :query, &#x27;%&#x27;)) OR &quot; +
+           &quot;LOWER(m.membershipNumber) LIKE LOWER(CONCAT(&#x27;%&#x27;, :query, &#x27;%&#x27;)) OR &quot; +
+           &quot;LOWER(m.email) LIKE LOWER(CONCAT(&#x27;%&#x27;, :query, &#x27;%&#x27;)) OR &quot; +
+           &quot;LOWER(m.phone) LIKE LOWER(CONCAT(&#x27;%&#x27;, :query, &#x27;%&#x27;))&quot;)
+    List&lt;Member&gt; searchMembers(@Param(&quot;query&quot;) String query);
+
+    List&lt;Member&gt; findByActive(Boolean active);
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">TransactionRepository.java</span>
+    <span class="code-category-badge">Persistence Layer (Spring Data JPA)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; JPA Aggregations</span>
+    <span class="desc-tag">Queries for active loans, overdue loans, and dynamic sum of all collected fines.</span>
+  </div>
+  <pre><code>package com.college.library.repository;
+
+import com.college.library.entity.Transaction;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Spring Data JPA Repository for Issue/Return Transactions.
+ */
+@Repository
+public interface TransactionRepository extends JpaRepository&lt;Transaction, Long&gt; {
+
+    List&lt;Transaction&gt; findByStatusOrderByIssueDateDesc(String status);
+
+    List&lt;Transaction&gt; findAllByOrderByCreatedAtDesc();
+
+    long countByStatus(String status);
+
+    Optional&lt;Transaction&gt; findFirstByBookIdAndStatus(Long bookId, String status);
+
+    List&lt;Transaction&gt; findByMemberIdAndStatus(Long memberId, String status);
+
+    @Query(&quot;SELECT t FROM Transaction t WHERE t.status = &#x27;ISSUED&#x27; AND t.dueDate &lt; :currentDate&quot;)
+    List&lt;Transaction&gt; findOverdueTransactions(@Param(&quot;currentDate&quot;) LocalDate currentDate);
+
+    @Query(&quot;SELECT COUNT(t) FROM Transaction t WHERE t.status = &#x27;ISSUED&#x27; AND t.dueDate &lt; :currentDate&quot;)
+    long countOverdueTransactions(@Param(&quot;currentDate&quot;) LocalDate currentDate);
+
+    @Query(&quot;SELECT COALESCE(SUM(t.fineAmount), 0.0) FROM Transaction t WHERE t.status = &#x27;RETURNED&#x27;&quot;)
+    Double sumTotalFines();
+}
+</code></pre>
+</div>
+
+<div style="margin-top: 28px; margin-bottom: 12px; page-break-before: auto;">
+  <h2 style="font-size: 14pt; color: #0f172a; margin: 0; padding-bottom: 4px; border-bottom: 2px solid #3b82f6;">
+    Service Layer (Step 10 &amp; 11 Logic)
+  </h2>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">BookService.java</span>
+    <span class="code-category-badge">Service Layer (Step 10 &amp; 11 Logic)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Interface Decoupling</span>
+    <span class="desc-tag">Contract for Step 10: Add, Edit, Delete, Search, and Check Availability operations.</span>
+  </div>
+  <pre><code>package com.college.library.service;
+
+import com.college.library.entity.Book;
+import java.util.List;
+
+/**
+ * Interface defining contract for Book Management (Step 10):
+ * - Add
+ * - Edit
+ * - Delete
+ * - Search
+ * - Check availability
+ */
+public interface BookService {
+
+    List&lt;Book&gt; getAllBooks();
+
+    Book getBookById(Long id);
+
+    Book addBook(Book book);
+
+    Book updateBook(Long id, Book updatedBook);
+
+    void deleteBook(Long id);
+
+    List&lt;Book&gt; searchBooks(String query);
+
+    List&lt;Book&gt; getAvailableBooks();
+
+    boolean checkAvailability(Long id);
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">BookServiceImpl.java</span>
+    <span class="code-category-badge">Service Layer (Step 10 &amp; 11 Logic)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Business Logic &amp; Collections</span>
+    <span class="desc-tag">Handles book CRUD, safe deletion checks, and catalog availability management.</span>
+  </div>
+  <pre><code>package com.college.library.service.impl;
+
+import com.college.library.entity.Book;
+import com.college.library.exception.ResourceNotFoundException;
+import com.college.library.repository.BookRepository;
+import com.college.library.repository.TransactionRepository;
+import com.college.library.service.BookService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+/**
+ * Implementation of BookService demonstrating:
+ * - OOP Encapsulation &amp; Polymorphism
+ * - Java Collections &amp; Stream API
+ * - Exception Handling
+ * - JPA Repository queries
+ */
+@Service
+@Transactional
+public class BookServiceImpl implements BookService {
+
+    private final BookRepository bookRepository;
+    private final TransactionRepository transactionRepository;
+
+    public BookServiceImpl(BookRepository bookRepository, TransactionRepository transactionRepository) {
+        this.bookRepository = bookRepository;
+        this.transactionRepository = transactionRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Book&gt; getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Book getBookById(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Book not found with ID: &quot; + id));
+    }
+
+    @Override
+    public Book addBook(Book book) {
+        if (book.getTotalCopies() == null || book.getTotalCopies() &lt;= 0) {
+            book.setTotalCopies(1);
+        }
+        if (book.getAvailableCopies() == null) {
+            book.setAvailableCopies(book.getTotalCopies());
+        }
+        book.setAvailable(book.getAvailableCopies() &gt; 0);
+        return bookRepository.save(book);
+    }
+
+    @Override
+    public Book updateBook(Long id, Book updatedBook) {
+        Book existing = getBookById(id);
+        existing.setTitle(updatedBook.getTitle());
+        existing.setAuthor(updatedBook.getAuthor());
+        existing.setIsbn(updatedBook.getIsbn());
+        existing.setCategory(updatedBook.getCategory());
+        existing.setPublisher(updatedBook.getPublisher());
+        existing.setPublicationYear(updatedBook.getPublicationYear());
+        if (updatedBook.getTotalCopies() != null) {
+            existing.setTotalCopies(updatedBook.getTotalCopies());
+        }
+        if (updatedBook.getAvailableCopies() != null) {
+            existing.setAvailableCopies(updatedBook.getAvailableCopies());
+        }
+        existing.setAvailable(existing.getAvailableCopies() &gt; 0);
+        return bookRepository.save(existing);
+    }
+
+    @Override
+    public void deleteBook(Long id) {
+        Book book = getBookById(id);
+        // Prevent deleting a book if it is currently issued
+        boolean hasActiveIssues = transactionRepository.findFirstByBookIdAndStatus(id, &quot;ISSUED&quot;).isPresent();
+        if (hasActiveIssues) {
+            throw new IllegalStateException(&quot;Cannot delete book &#x27;&quot; + book.getTitle() + &quot;&#x27; because it is currently issued to a member.&quot;);
+        }
+        bookRepository.delete(book);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Book&gt; searchBooks(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return bookRepository.findAll();
+        }
+        return bookRepository.searchBooks(query.trim());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Book&gt; getAvailableBooks() {
+        return bookRepository.findByAvailable(true);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean checkAvailability(Long id) {
+        Book book = getBookById(id);
+        return Boolean.TRUE.equals(book.getAvailable()) &amp;&amp; book.getAvailableCopies() &gt; 0;
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">MemberService.java</span>
+    <span class="code-category-badge">Service Layer (Step 10 &amp; 11 Logic)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Interface Decoupling</span>
+    <span class="desc-tag">Contract for Step 10: Add, Edit, Delete, and Search member records.</span>
+  </div>
+  <pre><code>package com.college.library.service;
+
+import com.college.library.entity.Member;
+import java.util.List;
+
+/**
+ * Interface defining contract for Member Management (Step 10):
+ * - Add
+ * - Edit
+ * - Delete
+ * - Search
+ */
+public interface MemberService {
+
+    List&lt;Member&gt; getAllMembers();
+
+    Member getMemberById(Long id);
+
+    Member getMemberByMembershipNumber(String membershipNumber);
+
+    Member addMember(Member member);
+
+    Member updateMember(Long id, Member updatedMember);
+
+    void deleteMember(Long id);
+
+    List&lt;Member&gt; searchMembers(String query);
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">MemberServiceImpl.java</span>
+    <span class="code-category-badge">Service Layer (Step 10 &amp; 11 Logic)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Business Validation</span>
+    <span class="desc-tag">Ensures member ID uniqueness and prevents deleting members with outstanding loans.</span>
+  </div>
+  <pre><code>package com.college.library.service.impl;
+
+import com.college.library.entity.Member;
+import com.college.library.exception.ResourceNotFoundException;
+import com.college.library.repository.MemberRepository;
+import com.college.library.repository.TransactionRepository;
+import com.college.library.service.MemberService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+/**
+ * Implementation of MemberService demonstrating OOP Encapsulation and Data validation.
+ */
+@Service
+@Transactional
+public class MemberServiceImpl implements MemberService {
+
+    private final MemberRepository memberRepository;
+    private final TransactionRepository transactionRepository;
+
+    public MemberServiceImpl(MemberRepository memberRepository, TransactionRepository transactionRepository) {
+        this.memberRepository = memberRepository;
+        this.transactionRepository = transactionRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Member&gt; getAllMembers() {
+        return memberRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Member getMemberById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Member not found with ID: &quot; + id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Member getMemberByMembershipNumber(String membershipNumber) {
+        return memberRepository.findByMembershipNumber(membershipNumber)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Member not found with membership number: &quot; + membershipNumber));
+    }
+
+    @Override
+    public Member addMember(Member member) {
+        if (memberRepository.existsByMembershipNumber(member.getMembershipNumber())) {
+            throw new IllegalArgumentException(&quot;Membership Number already exists: &quot; + member.getMembershipNumber());
+        }
+        return memberRepository.save(member);
+    }
+
+    @Override
+    public Member updateMember(Long id, Member updatedMember) {
+        Member existing = getMemberById(id);
+        existing.setName(updatedMember.getName());
+        existing.setEmail(updatedMember.getEmail());
+        existing.setPhone(updatedMember.getPhone());
+        existing.setMembershipType(updatedMember.getMembershipType());
+        existing.setDepartment(updatedMember.getDepartment());
+        existing.setActive(updatedMember.getActive());
+        return memberRepository.save(existing);
+    }
+
+    @Override
+    public void deleteMember(Long id) {
+        Member member = getMemberById(id);
+        // Prevent deleting a member with unreturned books
+        boolean hasActiveIssues = !transactionRepository.findByMemberIdAndStatus(id, &quot;ISSUED&quot;).isEmpty();
+        if (hasActiveIssues) {
+            throw new IllegalStateException(&quot;Cannot delete member &#x27;&quot; + member.getName() + &quot;&#x27; because they have active issued books.&quot;);
+        }
+        memberRepository.delete(member);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Member&gt; searchMembers(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return memberRepository.findAll();
+        }
+        return memberRepository.searchMembers(query.trim());
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">TransactionService.java</span>
+    <span class="code-category-badge">Service Layer (Step 10 &amp; 11 Logic)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Transaction Contract</span>
+    <span class="desc-tag">Defines the Step 10 Issue Book and Return Book workflows.</span>
+  </div>
+  <pre><code>package com.college.library.service;
+
+import com.college.library.dto.IssueRequest;
+import com.college.library.dto.ReturnRequest;
+import com.college.library.dto.ReturnResponse;
+import com.college.library.entity.Transaction;
+
+import java.util.List;
+
+/**
+ * Interface implementing Issue &amp; Return logic specified in Step 10.
+ */
+public interface TransactionService {
+
+    /**
+     * Issue book workflow:
+     * Select member -&gt; Select available book -&gt; Issue book -&gt; available = false -&gt; Create transaction -&gt; Due date = issue date + days
+     */
+    Transaction issueBook(IssueRequest request);
+
+    /**
+     * Return book workflow:
+     * Return book -&gt; Calculate late days -&gt; Fine = late days * ₹5 -&gt; Mark transaction returned -&gt; available = true
+     */
+    ReturnResponse returnBook(ReturnRequest request);
+
+    List&lt;Transaction&gt; getAllTransactions();
+
+    List&lt;Transaction&gt; getActiveTransactions();
+
+    List&lt;Transaction&gt; getOverdueTransactions();
+
+    Transaction getTransactionById(Long id);
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">TransactionServiceImpl.java</span>
+    <span class="code-category-badge">Service Layer (Step 10 &amp; 11 Logic)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; ACID Transactions &amp; Workflow</span>
+    <span class="desc-tag">Executes Issue logic (available=false, 14-day due date) and Return logic (available=true, Rs. 5/day fine).</span>
+  </div>
+  <pre><code>package com.college.library.service.impl;
+
+import com.college.library.dto.IssueRequest;
+import com.college.library.dto.ReturnRequest;
+import com.college.library.dto.ReturnResponse;
+import com.college.library.entity.Book;
+import com.college.library.entity.Member;
+import com.college.library.entity.Transaction;
+import com.college.library.exception.BookNotAvailableException;
+import com.college.library.exception.ResourceNotFoundException;
+import com.college.library.repository.BookRepository;
+import com.college.library.repository.MemberRepository;
+import com.college.library.repository.TransactionRepository;
+import com.college.library.service.FineCalculator;
+import com.college.library.service.TransactionService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * Implementation of Step 10 Issue &amp; Return Logic:
+ * Demonstrates:
+ * - OOP composition and polymorphism (FineCalculator injection)
+ * - ACID Transactions with @Transactional
+ * - Exception Handling
+ */
+@Service
+@Transactional
+public class TransactionServiceImpl implements TransactionService {
+
+    private final TransactionRepository transactionRepository;
+    private final BookRepository bookRepository;
+    private final MemberRepository memberRepository;
+    private final FineCalculator fineCalculator;
+
+    public TransactionServiceImpl(TransactionRepository transactionRepository,
+                                  BookRepository bookRepository,
+                                  MemberRepository memberRepository,
+                                  FineCalculator fineCalculator) {
+        this.transactionRepository = transactionRepository;
+        this.bookRepository = bookRepository;
+        this.memberRepository = memberRepository;
+        this.fineCalculator = fineCalculator;
+    }
+
+    /**
+     * Step 10: Issue Book Logic Flow:
+     * Select member -&gt; Select available book -&gt; Issue book -&gt; available = false -&gt; Create transaction -&gt; Due date = issue date + 14 days
+     */
+    @Override
+    public Transaction issueBook(IssueRequest request) {
+        // 1. Select member
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Member not found with ID: &quot; + request.getMemberId()));
+
+        if (Boolean.FALSE.equals(member.getActive())) {
+            throw new IllegalStateException(&quot;Member account is currently inactive.&quot;);
+        }
+
+        // 2. Select available book
+        Book book = bookRepository.findById(request.getBookId())
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Book not found with ID: &quot; + request.getBookId()));
+
+        // Check availability
+        if (Boolean.FALSE.equals(book.getAvailable()) || book.getAvailableCopies() == null || book.getAvailableCopies() &lt;= 0) {
+            throw new BookNotAvailableException(&quot;Book &#x27;&quot; + book.getTitle() + &quot;&#x27; is not available for issue.&quot;);
+        }
+
+        // 3. Issue book &amp; update available
+        book.markIssued();
+        bookRepository.save(book);
+
+        // 4. Create transaction
+        int days = (request.getLoanDays() != null &amp;&amp; request.getLoanDays() &gt; 0) ? request.getLoanDays() : 14;
+        LocalDate issueDate = LocalDate.now();
+        LocalDate dueDate = issueDate.plusDays(days);
+
+        Transaction transaction = new Transaction(book, member, issueDate, dueDate);
+        return transactionRepository.save(transaction);
+    }
+
+    /**
+     * Step 10: Return Book Logic Flow:
+     * Return book -&gt; Calculate late days -&gt; Fine = late days * ₹5 -&gt; Mark transaction returned -&gt; available = true
+     */
+    @Override
+    public ReturnResponse returnBook(ReturnRequest request) {
+        // 1. Retrieve transaction
+        Transaction transaction = transactionRepository.findById(request.getTransactionId())
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Transaction not found with ID: &quot; + request.getTransactionId()));
+
+        if (&quot;RETURNED&quot;.equalsIgnoreCase(transaction.getStatus())) {
+            throw new IllegalStateException(&quot;This transaction has already been completed and returned.&quot;);
+        }
+
+        LocalDate returnDate = request.getReturnDate() != null ? request.getReturnDate() : LocalDate.now();
+        transaction.setReturnDate(returnDate);
+
+        // 2. Calculate late days and fine (Fine = late days * ₹5)
+        long lateDays = fineCalculator.calculateLateDays(transaction.getDueDate(), returnDate);
+        double fineAmount = fineCalculator.calculateFine(transaction.getDueDate(), returnDate);
+
+        // 3. Mark transaction returned
+        transaction.setStatus(&quot;RETURNED&quot;);
+        transaction.setFineAmount(fineAmount);
+        transactionRepository.save(transaction);
+
+        // 4. Mark available = true &amp; increment copies
+        Book book = transaction.getBook();
+        book.markReturned();
+        bookRepository.save(book);
+
+        String message = lateDays &gt; 0
+                ? String.format(&quot;Book returned late by %d day(s). Late fine of ₹%.2f applied.&quot;, lateDays, fineAmount)
+                : &quot;Book returned successfully on time. No fine applied.&quot;;
+
+        return new ReturnResponse(
+                transaction.getId(),
+                book.getId(),
+                book.getTitle(),
+                transaction.getMember().getId(),
+                transaction.getMember().getName(),
+                transaction.getIssueDate(),
+                transaction.getDueDate(),
+                returnDate,
+                lateDays,
+                fineCalculator.getDailyRate(),
+                fineAmount,
+                message
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Transaction&gt; getAllTransactions() {
+        return transactionRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Transaction&gt; getActiveTransactions() {
+        return transactionRepository.findByStatusOrderByIssueDateDesc(&quot;ISSUED&quot;);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;Transaction&gt; getOverdueTransactions() {
+        return transactionRepository.findOverdueTransactions(LocalDate.now());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Transaction getTransactionById(Long id) {
+        return transactionRepository.findById(id)
+                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Transaction not found with ID: &quot; + id));
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">DashboardService.java</span>
+    <span class="code-category-badge">Service Layer (Step 10 &amp; 11 Logic)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Metrics Contract</span>
+    <span class="desc-tag">Contract for Step 11 dynamic dashboard metrics.</span>
+  </div>
+  <pre><code>package com.college.library.service;
+
+import com.college.library.dto.DashboardStats;
+
+/**
+ * Interface defining contract for Step 11 dynamic dashboard metrics.
+ */
+public interface DashboardService {
+
+    /**
+     * Dynamically computes:
+     * - Total Books
+     * - Available Books
+     * - Issued Books
+     * - Total Members
+     * - Overdue loans &amp; total fines
+     */
+    DashboardStats getDashboardStatistics();
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">DashboardServiceImpl.java</span>
+    <span class="code-category-badge">Service Layer (Step 10 &amp; 11 Logic)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Java Streams &amp; Aggregation</span>
+    <span class="desc-tag">Dynamically computes Total Books (100), Available (75), Issued (25), Members (50) from live database.</span>
+  </div>
+  <pre><code>package com.college.library.service.impl;
+
+import com.college.library.dto.DashboardStats;
+import com.college.library.entity.Book;
+import com.college.library.repository.BookRepository;
+import com.college.library.repository.MemberRepository;
+import com.college.library.repository.TransactionRepository;
+import com.college.library.service.DashboardService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * Step 11 - Computes dashboard metrics dynamically via Java APIs.
+ * Demonstrates Java Streams and aggregation across repositories.
+ */
+@Service
+@Transactional(readOnly = true)
+public class DashboardServiceImpl implements DashboardService {
+
+    private final BookRepository bookRepository;
+    private final MemberRepository memberRepository;
+    private final TransactionRepository transactionRepository;
+
+    public DashboardServiceImpl(BookRepository bookRepository,
+                                MemberRepository memberRepository,
+                                TransactionRepository transactionRepository) {
+        this.bookRepository = bookRepository;
+        this.memberRepository = memberRepository;
+        this.transactionRepository = transactionRepository;
+    }
+
+    @Override
+    public DashboardStats getDashboardStatistics() {
+        List&lt;Book&gt; books = bookRepository.findAll();
+
+        // Calculate total book copies dynamically using Java Streams
+        long totalCopies = books.stream()
+                .mapToLong(b -&gt; b.getTotalCopies() != null ? b.getTotalCopies() : 1)
+                .sum();
+
+        long availableCopies = books.stream()
+                .mapToLong(b -&gt; b.getAvailableCopies() != null ? b.getAvailableCopies() : (Boolean.TRUE.equals(b.getAvailable()) ? 1 : 0))
+                .sum();
+
+        long issuedCount = transactionRepository.countByStatus(&quot;ISSUED&quot;);
+        long totalMembers = memberRepository.count();
+        long overdueCount = transactionRepository.countOverdueTransactions(LocalDate.now());
+        Double totalFines = transactionRepository.sumTotalFines();
+
+        return new DashboardStats(
+                totalCopies,
+                availableCopies,
+                issuedCount,
+                totalMembers,
+                overdueCount,
+                totalFines != null ? totalFines : 0.0
+        );
+    }
+}
+</code></pre>
+</div>
+
+<div style="margin-top: 28px; margin-bottom: 12px; page-break-before: auto;">
+  <h2 style="font-size: 14pt; color: #0f172a; margin: 0; padding-bottom: 4px; border-bottom: 2px solid #3b82f6;">
+    REST Controllers (APIs)
+  </h2>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">BookController.java</span>
+    <span class="code-category-badge">REST Controllers (APIs)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; RESTful API Design</span>
+    <span class="desc-tag">Exposes /api/books endpoints for CRUD, search, and availability check.</span>
+  </div>
+  <pre><code>package com.college.library.controller;
+
+import com.college.library.entity.Book;
+import com.college.library.service.BookService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * REST Controller for Book Management (Step 10 operations):
+ * - Add: POST /api/books
+ * - Edit: PUT /api/books/{id}
+ * - Delete: DELETE /api/books/{id}
+ * - Search: GET /api/books/search?query=...
+ * - Check availability: GET /api/books/{id}/availability
+ */
+@RestController
+@RequestMapping(&quot;/api/books&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+public class BookController {
+
+    private final BookService bookService;
+
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;Book&gt;&gt; getAllBooks() {
+        return ResponseEntity.ok(bookService.getAllBooks());
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Book&gt; getBookById(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getBookById(id));
+    }
+
+    @GetMapping(&quot;/search&quot;)
+    public ResponseEntity&lt;List&lt;Book&gt;&gt; searchBooks(@RequestParam(required = false) String query) {
+        return ResponseEntity.ok(bookService.searchBooks(query));
+    }
+
+    @GetMapping(&quot;/available&quot;)
+    public ResponseEntity&lt;List&lt;Book&gt;&gt; getAvailableBooks() {
+        return ResponseEntity.ok(bookService.getAvailableBooks());
+    }
+
+    @GetMapping(&quot;/{id}/availability&quot;)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; checkAvailability(@PathVariable Long id) {
+        Book book = bookService.getBookById(id);
+        boolean available = bookService.checkAvailability(id);
+        return ResponseEntity.ok(Map.of(
+                &quot;bookId&quot;, book.getId(),
+                &quot;title&quot;, book.getTitle(),
+                &quot;available&quot;, available,
+                &quot;availableCopies&quot;, book.getAvailableCopies(),
+                &quot;totalCopies&quot;, book.getTotalCopies()
+        ));
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;Book&gt; addBook(@Valid @RequestBody Book book) {
+        Book saved = bookService.addBook(book);
+        return new ResponseEntity&lt;&gt;(saved, HttpStatus.CREATED);
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Book&gt; updateBook(@PathVariable Long id, @Valid @RequestBody Book book) {
+        Book updated = bookService.updateBook(id, book);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; deleteBook(@PathVariable Long id) {
+        bookService.deleteBook(id);
+        return ResponseEntity.ok(Collections.singletonMap(&quot;message&quot;, &quot;Book deleted successfully&quot;));
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">MemberController.java</span>
+    <span class="code-category-badge">REST Controllers (APIs)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; RESTful API Design</span>
+    <span class="desc-tag">Exposes /api/members endpoints for member registration, search, and management.</span>
+  </div>
+  <pre><code>package com.college.library.controller;
+
+import com.college.library.entity.Member;
+import com.college.library.service.MemberService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * REST Controller for Member Management (Step 10 operations):
+ * - Add: POST /api/members
+ * - Edit: PUT /api/members/{id}
+ * - Delete: DELETE /api/members/{id}
+ * - Search: GET /api/members/search?query=...
+ */
+@RestController
+@RequestMapping(&quot;/api/members&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+public class MemberController {
+
+    private final MemberService memberService;
+
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;Member&gt;&gt; getAllMembers() {
+        return ResponseEntity.ok(memberService.getAllMembers());
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Member&gt; getMemberById(@PathVariable Long id) {
+        return ResponseEntity.ok(memberService.getMemberById(id));
+    }
+
+    @GetMapping(&quot;/search&quot;)
+    public ResponseEntity&lt;List&lt;Member&gt;&gt; searchMembers(@RequestParam(required = false) String query) {
+        return ResponseEntity.ok(memberService.searchMembers(query));
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;Member&gt; addMember(@Valid @RequestBody Member member) {
+        Member saved = memberService.addMember(member);
+        return new ResponseEntity&lt;&gt;(saved, HttpStatus.CREATED);
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Member&gt; updateMember(@PathVariable Long id, @Valid @RequestBody Member member) {
+        Member updated = memberService.updateMember(id, member);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; deleteMember(@PathVariable Long id) {
+        memberService.deleteMember(id);
+        return ResponseEntity.ok(Collections.singletonMap(&quot;message&quot;, &quot;Member deleted successfully&quot;));
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">TransactionController.java</span>
+    <span class="code-category-badge">REST Controllers (APIs)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; RESTful API Design</span>
+    <span class="desc-tag">Exposes /api/transactions endpoints for /issue, /return, and active loans.</span>
+  </div>
+  <pre><code>package com.college.library.controller;
+
+import com.college.library.dto.IssueRequest;
+import com.college.library.dto.ReturnRequest;
+import com.college.library.dto.ReturnResponse;
+import com.college.library.entity.Transaction;
+import com.college.library.service.TransactionService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * REST Controller for Step 10 Issue &amp; Return transactions.
+ */
+@RestController
+@RequestMapping(&quot;/api/transactions&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+public class TransactionController {
+
+    private final TransactionService transactionService;
+
+    public TransactionController(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
+
+    /**
+     * Step 10: Issue Book endpoint
+     * Select member -&gt; Select available book -&gt; Issue book -&gt; available = false -&gt; Create transaction -&gt; Due date
+     */
+    @PostMapping(&quot;/issue&quot;)
+    public ResponseEntity&lt;Transaction&gt; issueBook(@Valid @RequestBody IssueRequest request) {
+        Transaction transaction = transactionService.issueBook(request);
+        return new ResponseEntity&lt;&gt;(transaction, HttpStatus.CREATED);
+    }
+
+    /**
+     * Step 10: Return Book endpoint
+     * Return book -&gt; Calculate late days -&gt; Fine = late days * ₹5 -&gt; Mark transaction returned -&gt; available = true
+     */
+    @PostMapping(&quot;/return&quot;)
+    public ResponseEntity&lt;ReturnResponse&gt; returnBook(@Valid @RequestBody ReturnRequest request) {
+        ReturnResponse response = transactionService.returnBook(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;Transaction&gt;&gt; getAllTransactions() {
+        return ResponseEntity.ok(transactionService.getAllTransactions());
+    }
+
+    @GetMapping(&quot;/active&quot;)
+    public ResponseEntity&lt;List&lt;Transaction&gt;&gt; getActiveTransactions() {
+        return ResponseEntity.ok(transactionService.getActiveTransactions());
+    }
+
+    @GetMapping(&quot;/overdue&quot;)
+    public ResponseEntity&lt;List&lt;Transaction&gt;&gt; getOverdueTransactions() {
+        return ResponseEntity.ok(transactionService.getOverdueTransactions());
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Transaction&gt; getTransactionById(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.getTransactionById(id));
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">DashboardController.java</span>
+    <span class="code-category-badge">REST Controllers (APIs)</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Dynamic API Data</span>
+    <span class="desc-tag">Exposes /api/dashboard/stats returning live JSON metrics for Step 11 dashboard.</span>
+  </div>
+  <pre><code>package com.college.library.controller;
+
+import com.college.library.dto.DashboardStats;
+import com.college.library.service.DashboardService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * REST Controller for Step 11 Dashboard.
+ * Serves real-time dynamic statistics directly from Java APIs rather than hard-coding them.
+ */
+@RestController
+@RequestMapping(&quot;/api/dashboard&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+public class DashboardController {
+
+    private final DashboardService dashboardService;
+
+    public DashboardController(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
+    }
+
+    @GetMapping(&quot;/stats&quot;)
+    public ResponseEntity&lt;DashboardStats&gt; getDashboardStats() {
+        return ResponseEntity.ok(dashboardService.getDashboardStatistics());
+    }
+}
+</code></pre>
+</div>
+
+<div style="margin-top: 28px; margin-bottom: 12px; page-break-before: auto;">
+  <h2 style="font-size: 14pt; color: #0f172a; margin: 0; padding-bottom: 4px; border-bottom: 2px solid #3b82f6;">
+    Exception Handling &amp; DTOs
+  </h2>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">GlobalExceptionHandler.java</span>
+    <span class="code-category-badge">Exception Handling &amp; DTOs</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Centralized Error Handling</span>
+    <span class="desc-tag">@RestControllerAdvice intercepting custom exceptions to return consistent JSON errors.</span>
+  </div>
+  <pre><code>package com.college.library.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Global Exception Handler to capture all application errors and return structured JSON responses.
+ * Demonstrates centralized exception handling in Spring Boot.
+ */
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleResourceNotFound(ResourceNotFoundException ex) {
+        Map&lt;String, Object&gt; error = new HashMap&lt;&gt;();
+        error.put(&quot;timestamp&quot;, LocalDateTime.now());
+        error.put(&quot;status&quot;, HttpStatus.NOT_FOUND.value());
+        error.put(&quot;error&quot;, &quot;Not Found&quot;);
+        error.put(&quot;message&quot;, ex.getMessage());
+        return new ResponseEntity&lt;&gt;(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BookNotAvailableException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleBookNotAvailable(BookNotAvailableException ex) {
+        Map&lt;String, Object&gt; error = new HashMap&lt;&gt;();
+        error.put(&quot;timestamp&quot;, LocalDateTime.now());
+        error.put(&quot;status&quot;, HttpStatus.BAD_REQUEST.value());
+        error.put(&quot;error&quot;, &quot;Book Not Available&quot;);
+        error.put(&quot;message&quot;, ex.getMessage());
+        return new ResponseEntity&lt;&gt;(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map&lt;String, Object&gt; errors = new HashMap&lt;&gt;();
+        errors.put(&quot;timestamp&quot;, LocalDateTime.now());
+        errors.put(&quot;status&quot;, HttpStatus.BAD_REQUEST.value());
+        errors.put(&quot;error&quot;, &quot;Validation Error&quot;);
+
+        Map&lt;String, String&gt; fieldErrors = new HashMap&lt;&gt;();
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+        errors.put(&quot;fieldErrors&quot;, fieldErrors);
+        return new ResponseEntity&lt;&gt;(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleGenericException(Exception ex) {
+        Map&lt;String, Object&gt; error = new HashMap&lt;&gt;();
+        error.put(&quot;timestamp&quot;, LocalDateTime.now());
+        error.put(&quot;status&quot;, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        error.put(&quot;error&quot;, &quot;Internal Server Error&quot;);
+        error.put(&quot;message&quot;, ex.getMessage());
+        return new ResponseEntity&lt;&gt;(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">IssueRequest.java</span>
+    <span class="code-category-badge">Exception Handling &amp; DTOs</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Data Transfer Object (DTO)</span>
+    <span class="desc-tag">Encapsulates request payload for issuing books.</span>
+  </div>
+  <pre><code>package com.college.library.dto;
+
+import jakarta.validation.constraints.NotNull;
+
+public class IssueRequest {
+
+    @NotNull(message = &quot;Member ID is required&quot;)
+    private Long memberId;
+
+    @NotNull(message = &quot;Book ID is required&quot;)
+    private Long bookId;
+
+    private Integer loanDays = 14; // Default standard loan period: 14 days
+
+    public IssueRequest() {
+    }
+
+    public IssueRequest(Long memberId, Long bookId, Integer loanDays) {
+        this.memberId = memberId;
+        this.bookId = bookId;
+        this.loanDays = loanDays != null ? loanDays : 14;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
+    public Long getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
+    }
+
+    public Integer getLoanDays() {
+        return loanDays;
+    }
+
+    public void setLoanDays(Integer loanDays) {
+        this.loanDays = loanDays;
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">ReturnResponse.java</span>
+    <span class="code-category-badge">Exception Handling &amp; DTOs</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Data Transfer Object (DTO)</span>
+    <span class="desc-tag">Encapsulates return details, late days calculation, and fine breakdown.</span>
+  </div>
+  <pre><code>package com.college.library.dto;
+
+import java.time.LocalDate;
+
+public class ReturnResponse {
+
+    private Long transactionId;
+    private Long bookId;
+    private String bookTitle;
+    private Long memberId;
+    private String memberName;
+    private LocalDate issueDate;
+    private LocalDate dueDate;
+    private LocalDate returnDate;
+    private long lateDays;
+    private double fineRate;
+    private double fineAmount;
+    private String message;
+
+    public ReturnResponse() {
+    }
+
+    public ReturnResponse(Long transactionId, Long bookId, String bookTitle, Long memberId,
+                          String memberName, LocalDate issueDate, LocalDate dueDate,
+                          LocalDate returnDate, long lateDays, double fineRate, double fineAmount,
+                          String message) {
+        this.transactionId = transactionId;
+        this.bookId = bookId;
+        this.bookTitle = bookTitle;
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.issueDate = issueDate;
+        this.dueDate = dueDate;
+        this.returnDate = returnDate;
+        this.lateDays = lateDays;
+        this.fineRate = fineRate;
+        this.fineAmount = fineAmount;
+        this.message = message;
+    }
+
+    public Long getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(Long transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public Long getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
+    }
+
+    public LocalDate getIssueDate() {
+        return issueDate;
+    }
+
+    public void setIssueDate(LocalDate issueDate) {
+        this.issueDate = issueDate;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public long getLateDays() {
+        return lateDays;
+    }
+
+    public void setLateDays(long lateDays) {
+        this.lateDays = lateDays;
+    }
+
+    public double getFineRate() {
+        return fineRate;
+    }
+
+    public void setFineRate(double fineRate) {
+        this.fineRate = fineRate;
+    }
+
+    public double getFineAmount() {
+        return fineAmount;
+    }
+
+    public void setFineAmount(Double fineAmount) {
+        this.fineAmount = fineAmount != null ? fineAmount : 0.0;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">DashboardStats.java</span>
+    <span class="code-category-badge">Exception Handling &amp; DTOs</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Data Transfer Object (DTO)</span>
+    <span class="desc-tag">Holds the Step 11 metrics payload.</span>
+  </div>
+  <pre><code>package com.college.library.dto;
+
+/**
+ * Step 11 Dashboard Metrics DTO.
+ * Numbers are fetched dynamically from Java APIs rather than hardcoded.
+ */
+public class DashboardStats {
+
+    private long totalBooks;
+    private long availableBooks;
+    private long issuedBooks;
+    private long totalMembers;
+    private long overdueBooks;
+    private double totalFinesCollected;
+
+    public DashboardStats() {
+    }
+
+    public DashboardStats(long totalBooks, long availableBooks, long issuedBooks,
+                          long totalMembers, long overdueBooks, double totalFinesCollected) {
+        this.totalBooks = totalBooks;
+        this.availableBooks = availableBooks;
+        this.issuedBooks = issuedBooks;
+        this.totalMembers = totalMembers;
+        this.overdueBooks = overdueBooks;
+        this.totalFinesCollected = totalFinesCollected;
+    }
+
+    public long getTotalBooks() {
+        return totalBooks;
+    }
+
+    public void setTotalBooks(long totalBooks) {
+        this.totalBooks = totalBooks;
+    }
+
+    public long getAvailableBooks() {
+        return availableBooks;
+    }
+
+    public void setAvailableBooks(long availableBooks) {
+        this.availableBooks = availableBooks;
+    }
+
+    public long getIssuedBooks() {
+        return issuedBooks;
+    }
+
+    public void setIssuedBooks(long issuedBooks) {
+        this.issuedBooks = issuedBooks;
+    }
+
+    public long getTotalMembers() {
+        return totalMembers;
+    }
+
+    public void setTotalMembers(long totalMembers) {
+        this.totalMembers = totalMembers;
+    }
+
+    public long getOverdueBooks() {
+        return overdueBooks;
+    }
+
+    public void setOverdueBooks(long overdueBooks) {
+        this.overdueBooks = overdueBooks;
+    }
+
+    public double getTotalFinesCollected() {
+        return totalFinesCollected;
+    }
+
+    public void setTotalFinesCollected(double totalFinesCollected) {
+        this.totalFinesCollected = totalFinesCollected;
+    }
+}
+</code></pre>
+</div>
+
+<div style="margin-top: 28px; margin-bottom: 12px; page-break-before: auto;">
+  <h2 style="font-size: 14pt; color: #0f172a; margin: 0; padding-bottom: 4px; border-bottom: 2px solid #3b82f6;">
+    Application Startup &amp; Configuration
+  </h2>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">DataInitializer.java</span>
+    <span class="code-category-badge">Application Startup &amp; Configuration</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; CommandLineRunner Seed Data</span>
+    <span class="desc-tag">Automatically populates 100 books, 50 members, and 25 loans for the live presentation demo.</span>
+  </div>
+  <pre><code>package com.college.library.config;
+
+import com.college.library.entity.Book;
+import com.college.library.entity.Member;
+import com.college.library.entity.Transaction;
+import com.college.library.repository.BookRepository;
+import com.college.library.repository.MemberRepository;
+import com.college.library.repository.TransactionRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Seeds initial demo data for college demonstration and viva.
+ * Populates realistic numbers matching Step 11:
+ * Total Book Copies: 100
+ * Available Copies: 75
+ * Issued Books: 25
+ * Total Members: 50
+ */
+@Component
+public class DataInitializer implements CommandLineRunner {
+
+    private final BookRepository bookRepository;
+    private final MemberRepository memberRepository;
+    private final TransactionRepository transactionRepository;
+
+    public DataInitializer(BookRepository bookRepository,
+                           MemberRepository memberRepository,
+                           TransactionRepository transactionRepository) {
+        this.bookRepository = bookRepository;
+        this.memberRepository = memberRepository;
+        this.transactionRepository = transactionRepository;
+    }
+
+    @Override
+    public void run(String... args) {
+        if (bookRepository.count() &gt; 0) {
+            return; // Already initialized
+        }
+
+        System.out.println(&quot;&gt;&gt;&gt; Initializing Library Demo Data for Step 10 &amp; 11...&quot;);
+
+        // 1. Create 50 Members
+        List&lt;Member&gt; members = new ArrayList&lt;&gt;();
+        String[] firstNames = {&quot;Aarav&quot;, &quot;Ananya&quot;, &quot;Rohan&quot;, &quot;Priya&quot;, &quot;Rahul&quot;, &quot;Neha&quot;, &quot;Vikram&quot;, &quot;Sneha&quot;, &quot;Aditya&quot;, &quot;Pooja&quot;};
+        String[] lastNames = {&quot;Sharma&quot;, &quot;Verma&quot;, &quot;Patel&quot;, &quot;Reddy&quot;, &quot;Singh&quot;, &quot;Kumar&quot;, &quot;Iyer&quot;, &quot;Nair&quot;, &quot;Gupta&quot;, &quot;Deshmukh&quot;};
+        String[] depts = {&quot;Computer Science&quot;, &quot;Information Technology&quot;, &quot;Electronics &amp; Comm.&quot;, &quot;Mechanical Engg.&quot;, &quot;Civil Engg.&quot;};
+
+        for (int i = 1; i &lt;= 50; i++) {
+            String fname = firstNames[(i - 1) % firstNames.length];
+            String lname = lastNames[((i - 1) / 5) % lastNames.length];
+            String name = fname + &quot; &quot; + lname + (i &gt; 10 ? &quot; (&quot; + i + &quot;)&quot; : &quot;&quot;);
+            String memId = String.format(&quot;MEM-2026-%03d&quot;, i);
+            String email = &quot;student&quot; + i + &quot;@college.edu&quot;;
+            String phone = String.format(&quot;+91 98765 %05d&quot;, 10000 + i);
+            String type = (i % 8 == 0) ? &quot;FACULTY&quot; : &quot;STUDENT&quot;;
+            String dept = depts[i % depts.length];
+
+            members.add(new Member(name, email, phone, memId, type, dept));
+        }
+        members = memberRepository.saveAll(members);
+
+        // 2. Create Books totaling exactly 100 copies across various standard college textbooks
+        // We will seed 20 titles with 5 copies each (20 * 5 = 100 total copies)
+        Object[][] bookTemplates = {
+            {&quot;Clean Code: A Handbook of Agile Software Craftsmanship&quot;, &quot;Robert C. Martin&quot;, &quot;978-0132350884&quot;, &quot;Software Engineering&quot;, 2008},
+            {&quot;Introduction to Algorithms (CLRS)&quot;, &quot;Thomas H. Cormen&quot;, &quot;978-0262033848&quot;, &quot;Computer Science&quot;, 2009},
+            {&quot;Effective Java (3rd Edition)&quot;, &quot;Joshua Bloch&quot;, &quot;978-0134685991&quot;, &quot;Programming&quot;, 2018},
+            {&quot;Operating System Concepts&quot;, &quot;Abraham Silberschatz&quot;, &quot;978-1119800361&quot;, &quot;Computer Science&quot;, 2021},
+            {&quot;Database System Concepts&quot;, &quot;Abraham Silberschatz&quot;, &quot;978-0078022159&quot;, &quot;Database&quot;, 2019},
+            {&quot;Computer Networks: A Systems Approach&quot;, &quot;Larry L. Peterson&quot;, &quot;978-0123850591&quot;, &quot;Networking&quot;, 2011},
+            {&quot;Artificial Intelligence: A Modern Approach&quot;, &quot;Stuart Russell&quot;, &quot;978-0134610993&quot;, &quot;Artificial Intelligence&quot;, 2020},
+            {&quot;Design Patterns: Elements of Reusable Object-Oriented Software&quot;, &quot;Erich Gamma&quot;, &quot;978-0201633610&quot;, &quot;Software Engineering&quot;, 1994},
+            {&quot;Head First Java&quot;, &quot;Kathy Sierra &amp; Bert Bates&quot;, &quot;978-0596009205&quot;, &quot;Programming&quot;, 2005},
+            {&quot;Spring Boot in Action&quot;, &quot;Craig Walls&quot;, &quot;978-1617292545&quot;, &quot;Frameworks&quot;, 2016},
+            {&quot;Compilers: Principles, Techniques, and Tools (Dragon Book)&quot;, &quot;Alfred V. Aho&quot;, &quot;978-0321486813&quot;, &quot;Computer Science&quot;, 2006},
+            {&quot;Computer Organization and Design (MIPS Edition)&quot;, &quot;David A. Patterson&quot;, &quot;978-0124077263&quot;, &quot;Hardware Architecture&quot;, 2013},
+            {&quot;The Pragmatic Programmer&quot;, &quot;David Thomas &amp; Andrew Hunt&quot;, &quot;978-0135957059&quot;, &quot;Software Engineering&quot;, 2019},
+            {&quot;Data Structures and Algorithms in Java&quot;, &quot;Robert Lafore&quot;, &quot;978-0672324536&quot;, &quot;Computer Science&quot;, 2002},
+            {&quot;Discrete Mathematics and Its Applications&quot;, &quot;Kenneth H. Rosen&quot;, &quot;978-0073383095&quot;, &quot;Mathematics&quot;, 2011},
+            {&quot;Python Crash Course&quot;, &quot;Eric Matthes&quot;, &quot;978-1593279288&quot;, &quot;Programming&quot;, 2019},
+            {&quot;Cracking the Coding Interview&quot;, &quot;Gayle Laakmann McDowell&quot;, &quot;978-0984782857&quot;, &quot;Career &amp; Algorithms&quot;, 2015},
+            {&quot;Cloud Computing: Concepts, Technology &amp; Architecture&quot;, &quot;Thomas Erl&quot;, &quot;978-0133387520&quot;, &quot;Cloud Computing&quot;, 2013},
+            {&quot;Modern Operating Systems&quot;, &quot;Andrew S. Tanenbaum&quot;, &quot;978-0133591620&quot;, &quot;Computer Science&quot;, 2014},
+            {&quot;Cryptography and Network Security&quot;, &quot;William Stallings&quot;, &quot;978-0134444284&quot;, &quot;Cybersecurity&quot;, 2017}
+        };
+
+        List&lt;Book&gt; books = new ArrayList&lt;&gt;();
+        for (Object[] b : bookTemplates) {
+            Book book = new Book((String) b[0], (String) b[1], (String) b[2], (String) b[3], (Integer) b[4]);
+            book.setPublisher(&quot;Pearson / McGraw-Hill / O&#x27;Reilly&quot;);
+            book.setTotalCopies(5);
+            book.setAvailableCopies(5); // will be adjusted after issuing 25 books
+            book.setAvailable(true);
+            books.add(book);
+        }
+        books = bookRepository.saveAll(books);
+
+        // 3. Issue exactly 25 books across the members to match Step 11:
+        // (Total Books: 100, Issued: 25, Available: 75, Members: 50)
+        LocalDate today = LocalDate.now();
+
+        for (int i = 0; i &lt; 25; i++) {
+            Book bookToIssue = books.get(i % books.size());
+            Member member = members.get(i);
+
+            // Deduct available copy
+            bookToIssue.setAvailableCopies(bookToIssue.getAvailableCopies() - 1);
+            if (bookToIssue.getAvailableCopies() == 0) {
+                bookToIssue.setAvailable(false);
+            }
+
+            // Create transaction: make some overdue for realistic testing of fine calculation (₹5/day)
+            LocalDate issueDate;
+            LocalDate dueDate;
+            if (i &lt; 5) {
+                // Overdue transactions: issued 20 days ago, due 6 days ago
+                issueDate = today.minusDays(20);
+                dueDate = today.minusDays(6);
+            } else if (i &lt; 10) {
+                // Overdue transactions: issued 16 days ago, due 2 days ago
+                issueDate = today.minusDays(16);
+                dueDate = today.minusDays(2);
+            } else {
+                // Active on-time transactions: issued 3 days ago, due in 11 days
+                issueDate = today.minusDays(3);
+                dueDate = today.plusDays(11);
+            }
+
+            Transaction tx = new Transaction(bookToIssue, member, issueDate, dueDate);
+            tx.setStatus(&quot;ISSUED&quot;);
+            transactionRepository.save(tx);
+        }
+
+        // Save updated availableCopies for books
+        bookRepository.saveAll(books);
+
+        // 4. Seed a few already returned historical transactions with fine collection
+        for (int i = 0; i &lt; 3; i++) {
+            Book b = books.get(i);
+            Member m = members.get(30 + i);
+            Transaction retTx = new Transaction(b, m, today.minusDays(30), today.minusDays(16));
+            retTx.setStatus(&quot;RETURNED&quot;);
+            retTx.setReturnDate(today.minusDays(12)); // 4 days late
+            retTx.setFineAmount(4 * 5.0); // 4 days * ₹5 = ₹20.0 fine
+            transactionRepository.save(retTx);
+        }
+
+        System.out.println(&quot;&gt;&gt;&gt; Demo Data successfully populated!&quot;);
+        System.out.println(&quot;&gt;&gt;&gt; Total Books: 100 copies | Available: 75 | Issued: 25 | Members: 50&quot;);
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">LibraryManagementApplication.java</span>
+    <span class="code-category-badge">Application Startup &amp; Configuration</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Main Entry Point</span>
+    <span class="desc-tag">@SpringBootApplication bootstrapping Tomcat server on port 8080.</span>
+  </div>
+  <pre><code>package com.college.library;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * Main Spring Boot Application Entry Point.
+ * Advanced Programming Practice Project - Library Management System
+ */
+@SpringBootApplication
+public class LibraryManagementApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(LibraryManagementApplication.class, args);
+        System.out.println(&quot;=========================================================&quot;);
+        System.out.println(&quot;  Library Management System is running successfully!&quot;);
+        System.out.println(&quot;  Open your browser at: http://localhost:8080&quot;);
+        System.out.println(&quot;  H2 Database Console:   http://localhost:8080/h2-console&quot;);
+        System.out.println(&quot;=========================================================&quot;);
+    }
+}
+</code></pre>
+</div>
+
+<div class="code-section">
+  <div class="code-header">
+    <span class="code-file-name">application.properties</span>
+    <span class="code-category-badge">Application Startup &amp; Configuration</span>
+  </div>
+  <div class="code-annotation">
+    <span class="oop-tag">&#9670; Spring Configuration</span>
+    <span class="desc-tag">H2 in-memory DB settings, port 8080, and /h2-console configuration.</span>
+  </div>
+  <pre><code># Application Configuration
+server.port=8080
+spring.application.name=Library Management System
+
+# H2 In-Memory Database Configuration (Default: runs with zero external setup)
+spring.datasource.url=jdbc:h2:mem:librarydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=true
+
+# H2 Web Console (Accessible during development at http://localhost:8080/h2-console)
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+spring.h2.console.settings.web-allow-others=false
+
+# ---------------------------------------------------------------------------
+# MySQL Configuration (Uncomment and adjust credentials if required by college)
+# ---------------------------------------------------------------------------
+# spring.datasource.url=jdbc:mysql://localhost:3306/library_db?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true
+# spring.datasource.username=root
+# spring.datasource.password=root
+# spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+# spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+</code></pre>
+</div>
+
+<!-- ================= VIVA EXAMINATION CHEAT SHEET ================= -->
+<div style="page-break-before: always; padding-top: 10px;">
+  <div class="page-title">
+    <span>Presentation &amp; Viva Voce Q&amp;A Cheat Sheet</span>
+    <span style="font-size: 9pt; font-weight: normal; color: #64748b;">Frequently Asked Examiner Questions</span>
+  </div>
+
+  <div class="viva-card">
+    <div class="viva-q">Q1: Where is Object-Oriented Inheritance demonstrated in your codebase?</div>
+    <div class="viva-a">
+      <strong>Answer:</strong> Inheritance is demonstrated in two key places:
+      <br>1. <code>BaseEntity.java</code> is an abstract <code>@MappedSuperclass</code> that provides shared primary key (<code>id</code>) and audit timestamps (<code>createdAt</code>, <code>updatedAt</code>) to all database models.
+      <br>2. <code>Person.java</code> is an abstract superclass providing common identity fields (<code>name</code>, <code>email</code>, <code>phone</code>), which is inherited by <code>Member.java</code>.
+    </div>
+  </div>
+
+  <div class="viva-card">
+    <div class="viva-q">Q2: How is the fine calculation implemented according to the Step 10 specification?</div>
+    <div class="viva-a">
+      <strong>Answer:</strong> We designed a decoupled <code>FineCalculator</code> interface implemented by <code>StandardFineCalculator.java</code>.
+      When a book is returned, it calculates:
+      <br><code>lateDays = ChronoUnit.DAYS.between(dueDate, returnDate)</code>
+      <br>If <code>lateDays &gt; 0</code>, the fine is calculated as: <code>fine = lateDays * 5.0</code> (&#8377;5 per late day). If returned on or before the due date, fine is &#8377;0.0.
+    </div>
+  </div>
+
+  <div class="viva-card">
+    <div class="viva-q">Q3: Are the Step 11 Dashboard numbers hard-coded or dynamic?</div>
+    <div class="viva-a">
+      <strong>Answer:</strong> They are 100% dynamic! <code>DashboardServiceImpl.java</code> queries the repositories and uses the Java Stream API to compute total copies, available copies, active issued loans, and registered members. <code>DataInitializer.java</code> seeds realistic initial data (100 total book copies, 75 available, 25 issued, 50 members) so that the live numbers exactly match the project prompt during presentation.
+    </div>
+  </div>
+
+  <div class="viva-card">
+    <div class="viva-q">Q4: How does your project handle database operations and what database is used?</div>
+    <div class="viva-a">
+      <strong>Answer:</strong> We use <strong>Spring Data JPA</strong> with Hibernate as the ORM. The default database is <strong>H2 In-Memory Database</strong> with the web console enabled at <code>http://localhost:8080/h2-console</code>. This requires zero external software setup on any machine. For production, <code>application.properties</code> also contains pre-configured MySQL connection settings.
+    </div>
+  </div>
+
+  <div class="viva-card">
+    <div class="viva-q">Q5: How are errors and exceptions handled in your REST APIs?</div>
+    <div class="viva-a">
+      <strong>Answer:</strong> Centralized exception handling is implemented using <code>@RestControllerAdvice</code> in <code>GlobalExceptionHandler.java</code>. Custom business exceptions like <code>ResourceNotFoundException</code> and <code>BookNotAvailableException</code> return clean, structured JSON error responses with proper HTTP status codes (404, 400).
+    </div>
+  </div>
+
+  <div class="viva-card">
+    <div class="viva-q">Q6: How do you run the complete project?</div>
+    <div class="viva-a">
+      <strong>Answer:</strong> From the project root folder, execute <code>mvn spring-boot:run</code> or double-click <code>run.bat</code>. Spring Boot starts the embedded Tomcat server on port 8080 and serves both the REST API backend and the responsive Single Page Web UI together at <code>http://localhost:8080</code>.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

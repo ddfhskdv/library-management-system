@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Critical bug fixes and dependency addition. Must be done first — later FEATs throw IllegalArgumentException/IllegalStateException and depend on the GlobalExceptionHandler fix returning 400/409 instead of 500; the Springdoc dependency must be present before any compile step. Independent of FEAT-002/003/004.",
+  "status": "completed",
+  "steps": [
+    "1. pom.xml: Add the Springdoc dependency inside <dependencies>, after the spring-boot-starter-test block: <dependency><groupId>org.springdoc</groupId><artifactId>springdoc-openapi-starter-webmvc-ui</artifactId><version>2.3.0</version></dependency>",
+    "2. src/main/resources/static/index.html footer: Change the single occurrence of 'http://localhost:8080/api/*' to 'http://localhost:8081/api/*' in the footer <p> tag.",
+    "3. src/main/resources/application.properties: Fix the H2 console comment from 'http://localhost:8080/h2-console' to 'http://localhost:8081/h2-console'.",
+    "4. src/main/java/com/college/library/exception/GlobalExceptionHandler.java: Add two new @ExceptionHandler methods BEFORE the generic Exception handler. Method 1: public ResponseEntity<Map<String,Object>> handleIllegalArgument(IllegalArgumentException ex) — build Map with timestamp=LocalDateTime.now(), status=HttpStatus.BAD_REQUEST.value() (400), error='Bad Request', message=ex.getMessage(); return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST). Method 2: public ResponseEntity<Map<String,Object>> handleIllegalState(IllegalStateException ex) — same pattern but HttpStatus.CONFLICT (409), error='Conflict'.",
+    "5. src/main/java/com/college/library/entity/Book.java isbn field: The field currently has @Column(nullable=false, length=50) but no validation annotation. Add @NotBlank(message='ISBN is required') and @Size(min=10, max=13, message='ISBN must be between 10 and 13 characters') before the @Column. Also add @Column(unique=true) to the same @Column annotation: @Column(nullable=false, unique=true, length=50). Required new import: jakarta.validation.constraints.Size (NotBlank already imported).",
+    "6. src/main/java/com/college/library/service/impl/BookServiceImpl.java addBook(): After the availableCopies/available defaulting block, add: if (book.getIsbn() != null && !book.getIsbn().isBlank() && bookRepository.existsByIsbn(book.getIsbn())) { throw new IllegalArgumentException(\"A book with ISBN '\" + book.getIsbn() + \"' already exists.\"); }",
+    "7. src/main/java/com/college/library/service/impl/BookServiceImpl.java updateBook(): After fetching the existing book, add: if (updatedBook.getIsbn() != null && !updatedBook.getIsbn().isBlank() && !updatedBook.getIsbn().equals(existing.getIsbn()) && bookRepository.existsByIsbn(updatedBook.getIsbn())) { throw new IllegalArgumentException(\"A book with ISBN '\" + updatedBook.getIsbn() + \"' already exists.\"); }",
+    "8. src/main/resources/static/js/app.js previewReturnFine(): Change the single line 'const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));' to 'const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));'. This matches the backend ChronoUnit.DAYS.between() truncating behavior."
+  ],
+  "acceptance_criteria": [
+    "mvn compile succeeds with BUILD SUCCESS",
+    "mvn test passes all 3 existing tests",
+    "pom.xml contains springdoc-openapi-starter-webmvc-ui 2.3.0",
+    "Footer shows port 8081",
+    "GlobalExceptionHandler has handlers for IllegalArgumentException (400) and IllegalStateException (409)",
+    "Book.java isbn field has @NotBlank, @Size(min=10,max=13), @Column(unique=true)",
+    "BookServiceImpl.addBook() throws IllegalArgumentException for duplicate ISBN",
+    "BookServiceImpl.updateBook() throws IllegalArgumentException when ISBN changed to an existing one",
+    "app.js previewReturnFine() uses Math.floor"
+  ],
+  "verification": [
+    "Run: mvn compile -f \"c:\\Users\\hp\\OneDrive\\Desktop\\library management\\pom.xml\" — expect BUILD SUCCESS",
+    "Run: mvn test -f \"c:\\Users\\hp\\OneDrive\\Desktop\\library management\\pom.xml\" — all 3 tests pass"
+  ],
+  "blocked_reason": null,
+  "findings": "Seed ISBNs in DataInitializer.java were hyphenated (e.g. 978-0132350884, 17 chars) which violated the new @Size(min=10,max=13) constraint. Fixed all seed ISBNs to non-hyphenated 13-digit format (e.g. 9780132350884). The integration test in LibraryManagementApplicationTests.java also used a hyphenated ISBN (978-0000000001); updated to 9780000000001. All future ISBNs entered via the UI or API must be non-hyphenated, 10-13 digit strings."
+}

@@ -1,0 +1,40 @@
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: library_db
+      MYSQL_USER: library_app
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+    volumes:
+      - library_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql,prod
+      SERVER_PORT: 8081
+      DB_URL: jdbc:mysql://db:3306/library_db?serverTimezone=UTC
+      DB_USERNAME: library_app
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      LIBRARY_ADMIN_USERNAME: ${LIBRARY_ADMIN_USERNAME:?Set LIBRARY_ADMIN_USERNAME in .env}
+      LIBRARY_ADMIN_PASSWORD: ${LIBRARY_ADMIN_PASSWORD:?Set LIBRARY_ADMIN_PASSWORD in .env}
+      LIBRARY_LIBRARIAN_USERNAME: ${LIBRARY_LIBRARIAN_USERNAME:?Set LIBRARY_LIBRARIAN_USERNAME in .env}
+      LIBRARY_LIBRARIAN_PASSWORD: ${LIBRARY_LIBRARIAN_PASSWORD:?Set LIBRARY_LIBRARIAN_PASSWORD in .env}
+      LIBRARY_DEMO_DATA_ENABLED: "false"
+      LIBRARY_REMINDERS_ENABLED: ${LIBRARY_REMINDERS_ENABLED:-false}
+    ports:
+      - "${APP_PORT:-8081}:8081"
+
+volumes:
+  library_mysql_data:

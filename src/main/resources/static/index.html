@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System | College Project</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans dark:bg-slate-900 dark:text-slate-100">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Brand / Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                        <i class="fa-solid fa-book-bookmark text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg text-slate-900 leading-tight">Library Management</h1>
+                        <p class="text-xs text-slate-500">Advanced Programming Practice Project</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden md:flex space-x-1">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition-all active-tab flex items-center space-x-2">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button onclick="switchTab('books')" id="nav-books" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center space-x-2">
+                        <i class="fa-solid fa-book"></i>
+                        <span>Books</span>
+                    </button>
+                    <button onclick="switchTab('members')" id="nav-members" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center space-x-2">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Members</span>
+                    </button>
+                    <button onclick="switchTab('scan')" id="nav-scan" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center space-x-2">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>Scan & Issue</span>
+                    </button>
+                    <button onclick="switchTab('transactions')" id="nav-transactions" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                        <span>Issue & Return</span>
+                    </button>
+                </nav>
+
+                <!-- Header Actions -->
+                <div class="flex items-center space-x-3">
+                    <button id="authButton" onclick="signOut()" class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors">Sign in</button>
+                    <button id="darkModeToggle" onclick="toggleDarkMode()" class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 transition-colors flex items-center space-x-1.5" title="Toggle dark mode"><i id="darkModeIcon" class="fa-solid fa-moon"></i></button>
+                    <a href="/h2-console" target="_blank" class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors flex items-center space-x-1.5" title="Open H2 Database SQL Console">
+                        <i class="fa-solid fa-database text-amber-500"></i>
+                        <span class="hidden sm:inline">H2 Console</span>
+                    </a>
+                    <button onclick="switchTab('transactions')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm shadow-blue-600/30 flex items-center space-x-2 transition-all">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span>Issue Book</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Subbar -->
+        <div class="flex md:hidden border-t border-slate-200 bg-slate-50 px-2 py-1 justify-around">
+            <button onclick="switchTab('dashboard')" class="px-3 py-1.5 text-xs font-medium text-blue-600 flex items-center space-x-1">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </button>
+            <button onclick="switchTab('books')" class="px-3 py-1.5 text-xs font-medium text-slate-600 flex items-center space-x-1">
+                <i class="fa-solid fa-book"></i>
+                <span>Books</span>
+            </button>
+            <button onclick="switchTab('members')" class="px-3 py-1.5 text-xs font-medium text-slate-600 flex items-center space-x-1">
+                <i class="fa-solid fa-users"></i>
+                <span>Members</span>
+            </button>
+            <button onclick="switchTab('scan')" class="px-3 py-1.5 text-xs font-medium text-slate-600 flex items-center space-x-1">
+                <i class="fa-solid fa-qrcode"></i>
+                <span>Scan</span>
+            </button>
+            <button onclick="switchTab('transactions')" class="px-3 py-1.5 text-xs font-medium text-slate-600 flex items-center space-x-1">
+                <i class="fa-solid fa-repeat"></i>
+                <span>Issue/Return</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+        <!-- ============================================================= -->
+        <!-- TAB 1: STEP 11 DASHBOARD                                      -->
+        <!-- ============================================================= -->
+        <section id="tab-dashboard" class="space-y-8 animate-fadeIn">
+            <!-- Header greeting & live API badge -->
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+                <div class="relative z-10">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/30 text-blue-200 border border-blue-400/30 mb-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Live Java API Data
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Library Dashboard</h2>
+                    <p class="text-blue-200 text-sm mt-1">Real-time statistics dynamically loaded from Spring Boot REST endpoints.</p>
+                </div>
+                <div class="flex flex-wrap gap-2.5 relative z-10">
+                    <button onclick="openModal('addBookModal')" class="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-xl text-xs font-semibold backdrop-blur border border-white/20 flex items-center space-x-2 transition">
+                        <i class="fa-solid fa-book-medical"></i>
+                        <span>Add Book</span>
+                    </button>
+                    <button onclick="openModal('addMemberModal')" class="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-xl text-xs font-semibold backdrop-blur border border-white/20 flex items-center space-x-2 transition">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Add Member</span>
+                    </button>
+                    <button onclick="fetchDashboardStats()" class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-md flex items-center space-x-2 transition">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 11 Metrics Cards (Total Books: 100, Available: 75, Issued: 25, Members: 50) -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Step 11 Key Operations Metrics</h3>
+                    <span class="text-xs text-slate-400">Endpoint: <code class="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">/api/dashboard/stats</code></span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <!-- Total Books -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-500 uppercase">Total Books</p>
+                                <h3 id="stat-total-books" class="text-3xl font-extrabold text-slate-900 mt-2">--</h3>
+                                <p class="text-xs text-slate-400 mt-1">Book catalog copies</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
+                            <div class="bg-blue-600 h-full rounded-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Available Books -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold text-emerald-600 uppercase">Available</p>
+                                <h3 id="stat-available-books" class="text-3xl font-extrabold text-emerald-700 mt-2">--</h3>
+                                <p class="text-xs text-slate-400 mt-1">Ready for issuance</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
+                            <div id="bar-available" class="bg-emerald-500 h-full rounded-full" style="width: 75%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Issued Books -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold text-amber-600 uppercase">Issued Books</p>
+                                <h3 id="stat-issued-books" class="text-3xl font-extrabold text-amber-700 mt-2">--</h3>
+                                <p class="text-xs text-slate-400 mt-1">Currently on loan</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-hand-holding-hand"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
+                            <div id="bar-issued" class="bg-amber-500 h-full rounded-full" style="width: 25%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Members -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold text-purple-600 uppercase">Members</p>
+                                <h3 id="stat-members" class="text-3xl font-extrabold text-purple-700 mt-2">--</h3>
+                                <p class="text-xs text-slate-400 mt-1">Students & faculty</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
+                            <div class="bg-purple-600 h-full rounded-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary Stats: Overdue & Fines -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="bg-gradient-to-br from-rose-50 to-white p-5 rounded-2xl border border-rose-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-rose-700 uppercase">Overdue Issues</p>
+                            <h4 id="stat-overdue" class="text-2xl font-bold text-slate-800 mt-0.5">--</h4>
+                            <p class="text-xs text-rose-500">Books exceeding 14-day return period</p>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('transactions'); filterTransactions('overdue');" class="text-xs font-semibold text-rose-700 hover:text-rose-900 bg-white px-3 py-1.5 rounded-lg border border-rose-200 shadow-sm transition">
+                        View Overdue &rarr;
+                    </button>
+                </div>
+
+                <div class="bg-gradient-to-br from-emerald-50 to-white p-5 rounded-2xl border border-emerald-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-emerald-700 uppercase">Total Fines Collected</p>
+                            <h4 id="stat-fines" class="text-2xl font-bold text-slate-800 mt-0.5">₹--</h4>
+                            <p class="text-xs text-emerald-600">Configured daily fine rate</p>
+                        </div>
+                    </div>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-medium">
+                        Rate: ₹<span id="fineRateLabel">5.00</span> / day
+                    </span>
+                </div>
+
+                <div class="bg-gradient-to-br from-amber-50 to-white p-5 rounded-2xl border border-amber-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-amber-700 uppercase">Outstanding Fines</p>
+                            <h4 id="stat-outstanding-fines" class="text-2xl font-bold text-slate-800 mt-0.5">₹0.00</h4>
+                            <p class="text-xs text-amber-600">Unpaid fine balance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overdue Detail Collapsible Panel -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5 flex justify-between items-center cursor-pointer" onclick="toggleOverduePanel()">
+                    <h3 class="font-bold text-slate-900 text-base flex items-center space-x-2">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
+                        <span>Overdue Books Detail</span>
+                    </h3>
+                    <button class="text-slate-400 hover:text-slate-600 transition-transform duration-200" title="Toggle overdue panel">
+                        <i id="overdueChevron" class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div id="overdueDetailContent" class="hidden border-t border-slate-100 overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-rose-50 text-xs uppercase font-semibold text-rose-600">
+                            <tr>
+                                <th class="px-4 py-3">Member Name</th>
+                                <th class="px-4 py-3">Book Title</th>
+                                <th class="px-4 py-3">Issue Date</th>
+                                <th class="px-4 py-3">Due Date</th>
+                                <th class="px-4 py-3">Days Overdue</th>
+                                <th class="px-4 py-3">Est. Fine</th>
+                                <th class="px-4 py-3">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="overdueDetailTable" class="divide-y divide-slate-100">
+                            <tr><td colspan="7" class="px-4 py-6 text-center text-slate-400">Click to expand and load overdue data.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Popular Books Panel -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-900 text-base">Most Popular Books</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Books by issue demand</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500">
+                            <tr>
+                                <th class="px-4 py-3">Rank</th>
+                                <th class="px-4 py-3">Title</th>
+                                <th class="px-4 py-3">Author</th>
+                                <th class="px-4 py-3">Times Issued</th>
+                            </tr>
+                        </thead>
+                        <tbody id="popularBooksTable" class="divide-y divide-slate-100">
+                            <tr><td colspan="4" class="px-4 py-6 text-center text-slate-400">Loading popular books...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Active Issues Table Preview -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">Current Active Book Issues</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Books issued to members with return due dates</p>
+                    </div>
+                    <button onclick="switchTab('transactions')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                        <span>See All Transactions</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3">Book Title</th>
+                                <th class="px-6 py-3">Member</th>
+                                <th class="px-6 py-3">Issue Date</th>
+                                <th class="px-6 py-3">Due Date</th>
+                                <th class="px-6 py-3">Status</th>
+                                <th class="px-6 py-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-recent-table" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="6" class="px-6 py-6 text-center text-slate-400">Loading active issues...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- TAB 2: STEP 10 BOOK MANAGEMENT                                -->
+        <!-- ============================================================= -->
+        <section id="tab-books" class="space-y-6 hidden animate-fadeIn">
+            <!-- Header & Search Controls -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Book Management</h2>
+                    <p class="text-sm text-slate-500">Add, edit, delete, search, and check real-time book availability (Step 10).</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportBooksCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 transition">
+                        <i class="fa-solid fa-file-csv text-xs"></i>
+                        <span>Export CSV</span>
+                    </button>
+                    <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer">
+                        <i class="fa-solid fa-file-import text-xs"></i> Import CSV
+                        <input type="file" accept=".csv,text/csv" class="hidden" onchange="importBooksCSV(this)">
+                    </label>
+                    <button onclick="downloadReport('/api/reports/books.csv')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold">Full Report</button>
+                    <button onclick="openModal('addBookModal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-sm transition">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span>Add New Book</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                    <input type="text" id="bookSearchInput" onkeyup="handleBookSearch()" placeholder="Search by Title, Author, ISBN, Category..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <select id="bookCategoryFilter" onchange="filterBooksByCategory()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium text-slate-700 focus:outline-none">
+                        <option value="">All Categories</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Software Engineering">Software Engineering</option>
+                        <option value="Programming">Programming</option>
+                        <option value="Artificial Intelligence">Artificial Intelligence</option>
+                        <option value="Database">Database</option>
+                        <option value="Networking">Networking</option>
+                    </select>
+                    <button onclick="fetchAllBooks()" class="text-xs px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium text-slate-700 transition">
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Books Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3.5">ID</th>
+                                <th class="px-6 py-3.5">Title & Author</th>
+                                <th class="px-6 py-3.5">Category</th>
+                                <th class="px-6 py-3.5">ISBN</th>
+                                <th class="px-6 py-3.5">Copies</th>
+                                <th class="px-6 py-3.5">Availability</th>
+                                <th class="px-6 py-3.5 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="books-table-body" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="7" class="px-6 py-8 text-center text-slate-400">Loading catalog...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="books-pagination" class="flex justify-end"></div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- TAB 3: STEP 10 MEMBER MANAGEMENT                              -->
+        <!-- ============================================================= -->
+        <section id="tab-members" class="space-y-6 hidden animate-fadeIn">
+            <!-- Header & Search Controls -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Member Management</h2>
+                    <p class="text-sm text-slate-500">Manage student and faculty library memberships (Step 10).</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportMembersCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 transition">
+                        <i class="fa-solid fa-file-csv text-xs"></i>
+                        <span>Export CSV</span>
+                    </button>
+                    <button onclick="openModal('addMemberModal')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-sm transition">
+                        <i class="fa-solid fa-user-plus text-xs"></i>
+                        <span>Register Member</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                    <input type="text" id="memberSearchInput" onkeyup="handleMemberSearch()" placeholder="Search by Name, Member ID, Email, Phone..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition">
+                </div>
+                <button onclick="fetchAllMembers()" class="text-xs px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium text-slate-700 transition">
+                    Refresh List
+                </button>
+            </div>
+
+            <!-- Members Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3.5">Member ID</th>
+                                <th class="px-6 py-3.5">Name</th>
+                                <th class="px-6 py-3.5">Type & Department</th>
+                                <th class="px-6 py-3.5">Contact Info</th>
+                                <th class="px-6 py-3.5">Status</th>
+                                <th class="px-6 py-3.5 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="members-table-body" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-slate-400">Loading members...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="members-pagination" class="flex justify-end"></div>
+        </section>
+
+        <section id="tab-scan" class="space-y-6 hidden animate-fadeIn">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900">Scan & Issue</h2>
+                <p class="text-sm text-slate-500">Scan a student ID and book code, then confirm the issue. For returns, scan the book code and confirm the matching active loan.</p>
+            </div>
+
+            <div class="flex flex-wrap items-end gap-4 bg-white p-4 rounded-2xl border border-slate-200">
+                <label class="text-sm font-medium text-slate-700">Operation
+                    <select id="scanMode" onchange="resetScanSession()" class="block mt-1 border rounded-lg px-3 py-2">
+                        <option value="issue">Issue book</option>
+                        <option value="return">Return book</option>
+                    </select>
+                </label>
+                <label id="scanLoanDaysGroup" class="text-sm font-medium text-slate-700">Loan duration (days)
+                    <input id="scanLoanDays" type="number" min="1" max="60" value="14" class="block mt-1 border rounded-lg px-3 py-2 w-32">
+                </label>
+                <button id="startScannerButton" onclick="startScanner()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                    <i class="fa-solid fa-camera mr-1"></i> Start camera
+                </button>
+                <button onclick="stopScanner()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold">Stop camera</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-slate-950 rounded-2xl p-4">
+                    <video id="scannerVideo" class="w-full max-h-80 rounded-xl bg-black object-cover" autoplay playsinline muted aria-label="QR and barcode camera preview"></video>
+                    <p class="text-slate-300 text-xs mt-3">Camera access requires localhost or HTTPS and browser permission. Manual entry works when scanning is unavailable.</p>
+                    <div class="flex gap-2 mt-3">
+                        <input id="scanCodeInput" onkeydown="if(event.key==='Enter'){event.preventDefault();resolveManualScan();}" class="min-w-0 flex-1 rounded-lg px-3 py-2 text-sm" placeholder="Enter student ID, Book ID or ISBN">
+                        <button onclick="resolveManualScan()" class="bg-white text-slate-900 px-4 py-2 rounded-lg text-sm font-semibold">Use code</button>
+                    </div>
+                    <p id="scanStatus" class="text-sm text-slate-200 mt-3" role="status">Choose an operation and scan a code.</p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-slate-900">Student</h3>
+                        <p id="scanStudentDetails" class="text-sm text-slate-500 mt-1">Scan or enter the student's ID.</p>
+                    </div>
+                    <div class="border-t pt-4">
+                        <h3 class="font-bold text-slate-900">Book</h3>
+                        <p id="scanBookDetails" class="text-sm text-slate-500 mt-1">Scan or enter the book's QR/barcode ID.</p>
+                    </div>
+                    <div id="scanReturnLoanGroup" class="hidden">
+                        <label class="block text-sm font-medium text-slate-700">Active loan
+                            <select id="scanReturnLoan" class="block mt-1 w-full border rounded-lg px-3 py-2"></select>
+                        </label>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="confirmScanIssue" onclick="confirmScannedIssue()" class="hidden bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">Confirm issue</button>
+                        <button id="confirmScanReturn" onclick="confirmScannedReturn()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">Confirm return</button>
+                        <button onclick="resetScanSession()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold">Clear</button>
+                    </div>
+                    <div id="scanReceipt" class="hidden rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-900" aria-live="polite"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- TAB 4: STEP 10 ISSUE & RETURN WORKFLOWS                       -->
+        <!-- ============================================================= -->
+        <section id="tab-transactions" class="space-y-8 hidden animate-fadeIn">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900">Issue & Return Operations</h2>
+                <p class="text-sm text-slate-500">Step 10 Library Logic: Book loan issuance and return fine calculation.</p>
+            </div>
+
+            <!-- 2-Column Workflows Display -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- Issue Book Workflow Card (Image 1) -->
+                <div class="bg-white p-6 rounded-2xl border border-blue-100 shadow-sm relative">
+                    <div class="flex items-center space-x-3 mb-5 pb-4 border-b border-slate-100">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base">Issue Book Workflow</h3>
+                            <p class="text-xs text-slate-500">Step 10: Select Member &rarr; Select Book &rarr; Set Available=false</p>
+                        </div>
+                    </div>
+
+                    <form id="issueBookForm" onsubmit="handleIssueBookSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">1. Select Member</label>
+                            <select id="issueMemberSelect" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">-- Choose Member --</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">2. Select Available Book</label>
+                            <select id="issueBookSelect" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">-- Choose Available Book --</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">3. Loan Period (Days)</label>
+                            <input type="number" id="issueLoanDays" value="14" min="1" max="60" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <p class="text-xs text-slate-400 mt-1">Due date will automatically be set to Issue Date + 14 days.</p>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-blue-500/20 text-sm flex items-center justify-center space-x-2 transition">
+                                <i class="fa-solid fa-check"></i>
+                                <span>Confirm Book Issue</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Return Book Workflow Card (Image 2) -->
+                <div class="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm relative">
+                    <div class="flex items-center space-x-3 mb-5 pb-4 border-b border-slate-100">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base">Return Book & Calculate Fine</h3>
+                            <p class="text-xs text-slate-500">Calculate late days and apply the configured fine before making the copy available.</p>
+                        </div>
+                    </div>
+
+                    <form id="returnBookForm" onsubmit="handleReturnBookSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">1. Select Active Loan</label>
+                            <select id="returnTransactionSelect" onchange="previewReturnFine()" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="">-- Choose Issued Book to Return --</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">2. Return Date (Simulate Overdue/On-time)</label>
+                            <input type="date" id="customReturnDate" onchange="previewReturnFine()" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <p class="text-xs text-slate-400 mt-1">Defaults to today. Change date to test late fine computation.</p>
+                        </div>
+
+                        <!-- Live Fine Preview Box -->
+                        <div id="finePreviewBox" class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                            <div class="flex justify-between text-slate-600">
+                                <span>Due Date:</span>
+                                <span id="previewDueDate" class="font-medium text-slate-800">--</span>
+                            </div>
+                            <div class="flex justify-between text-slate-600">
+                                <span>Late Days:</span>
+                                <span id="previewLateDays" class="font-medium text-slate-800">0 days</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-1 border-t border-slate-200 font-bold text-sm">
+                                <span class="text-slate-800">Fine Due (₹<span id="fineRatePreviewLabel">5.00</span>/day):</span>
+                                <span id="previewFineAmount" class="text-emerald-700 text-base">₹0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-500/20 text-sm flex items-center justify-center space-x-2 transition">
+                                <i class="fa-solid fa-receipt"></i>
+                                <span>Process Return & Close Loan</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Transaction Search Bar -->
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                <input type="text" id="txSearchInput" oninput="handleTxSearch()" placeholder="Search by member name or book title..." class="w-full md:w-96 pl-10 pr-4 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            </div>
+
+            <!-- Transactions History Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">All Transactions Log</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Complete record of book issues and returns with recorded fines</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadReport('/api/reports/transactions.csv')" class="px-3 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700">Export report</button>
+                        <button onclick="downloadReport('/api/reports/overdue.csv')" class="px-3 py-1 text-xs font-semibold rounded-lg bg-rose-50 text-rose-700">Overdue report</button>
+                        <button onclick="filterTransactions('all')" id="btn-tx-all" class="px-3 py-1 text-xs font-semibold rounded-lg bg-blue-100 text-blue-700">All</button>
+                        <button onclick="filterTransactions('ISSUED')" id="btn-tx-active" class="px-3 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">Active</button>
+                        <button onclick="filterTransactions('overdue')" id="btn-tx-overdue" class="px-3 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">Overdue</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3.5">ID</th>
+                                <th class="px-6 py-3.5">Book Title</th>
+                                <th class="px-6 py-3.5">Member Name</th>
+                                <th class="px-6 py-3.5">Issue Date</th>
+                                <th class="px-6 py-3.5">Due Date</th>
+                                <th class="px-6 py-3.5">Return Date</th>
+                                <th class="px-6 py-3.5">Fine</th>
+                                <th class="px-6 py-3.5">Status</th>
+                                <th class="px-6 py-3.5 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-table-body" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="9" class="px-6 py-8 text-center text-slate-400">Loading transactions...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="transactions-pagination" class="flex justify-end"></div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5 flex justify-between items-center border-b border-slate-100">
+                    <div>
+                        <h3 class="font-bold text-slate-900">Reservations & waitlist</h3>
+                        <p class="text-xs text-slate-500 mt-1">Ready copies are held for the next member in queue for 48 hours.</p>
+                    </div>
+                    <button onclick="loadReservations()" class="text-xs font-semibold text-blue-600">Refresh</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500">
+                            <tr><th class="px-5 py-3">Book</th><th class="px-5 py-3">Member</th><th class="px-5 py-3">Status</th><th class="px-5 py-3">Hold until</th><th class="px-5 py-3">Action</th></tr>
+                        </thead>
+                        <tbody id="reservations-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <p><strong>Library Management System</strong> &bull; Advanced Programming Practice &bull; Java Spring Boot &amp; H2 Database</p>
+        <p class="mt-1 text-slate-400">REST APIs served at <code class="text-slate-600">http://localhost:8081/api/*</code></p>
+    </footer>
+
+    <!-- ============================================================= -->
+    <!-- MODALS                                                        -->
+    <!-- ============================================================= -->
+
+    <!-- Add Book Modal -->
+    <div id="addBookModal" class="modal fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-900 text-lg">Add New Book (Step 10)</h3>
+                <button onclick="closeModal('addBookModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="addBookForm" onsubmit="handleAddBookSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Book Title *</label>
+                    <input type="text" id="newBookTitle" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Author *</label>
+                        <input type="text" id="newBookAuthor" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">ISBN *</label>
+                        <input type="text" id="newBookIsbn" required placeholder="978-..." class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Category</label>
+                        <input type="text" id="newBookCategory" placeholder="e.g. Computer Science" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Total Copies</label>
+                        <input type="number" id="newBookCopies" value="5" min="1" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Publication Year</label>
+                    <input type="number" id="newBookYear" value="2024" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Cover image URL (optional)</label>
+                    <input type="url" id="newBookCoverUrl" placeholder="https://..." class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('addBookModal')" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition">Save Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Book Modal -->
+    <div id="editBookModal" class="modal fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-900 text-lg">Edit Book (Step 10)</h3>
+                <button onclick="closeModal('editBookModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="editBookForm" onsubmit="handleEditBookSubmit(event)" class="space-y-3">
+                <input type="hidden" id="editBookId">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Book Title *</label>
+                    <input type="text" id="editBookTitle" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Author *</label>
+                        <input type="text" id="editBookAuthor" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">ISBN *</label>
+                        <input type="text" id="editBookIsbn" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Category</label>
+                        <input type="text" id="editBookCategory" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Total Copies</label>
+                        <input type="number" id="editBookCopies" min="1" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Cover image URL (optional)</label>
+                    <input type="url" id="editBookCoverUrl" placeholder="https://..." class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('editBookModal')" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition">Update Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div id="addMemberModal" class="modal fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-900 text-lg">Register Member (Step 10)</h3>
+                <button onclick="closeModal('addMemberModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="addMemberForm" onsubmit="handleAddMemberSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Full Name *</label>
+                    <input type="text" id="newMemberName" required placeholder="e.g. Rahul Sharma" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Member ID *</label>
+                        <input type="text" id="newMemberNum" required placeholder="MEM-2026-..." class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Membership Type</label>
+                        <select id="newMemberType" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            <option value="STUDENT">STUDENT</option>
+                            <option value="FACULTY">FACULTY</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Email *</label>
+                    <input type="email" id="newMemberEmail" required placeholder="student@college.edu" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Phone</label>
+                        <input type="text" id="newMemberPhone" placeholder="+91 98765..." class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Department</label>
+                        <input type="text" id="newMemberDept" placeholder="Computer Science" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('addMemberModal')" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-purple-600 rounded-xl hover:bg-purple-700 transition">Register Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Member Modal -->
+    <div id="editMemberModal" class="modal fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-900 text-lg">Edit Member</h3>
+                <button onclick="closeModal('editMemberModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="editMemberForm" onsubmit="handleEditMemberSubmit(event)" class="space-y-3">
+                <input type="hidden" id="editMemberId">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Full Name *</label>
+                    <input type="text" id="editMemberName" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Member ID</label>
+                        <input type="text" id="editMemberNum" readonly class="w-full text-sm bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none text-slate-500 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Membership Type</label>
+                        <select id="editMemberType" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            <option value="STUDENT">STUDENT</option>
+                            <option value="FACULTY">FACULTY</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Email *</label>
+                    <input type="email" id="editMemberEmail" required class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Phone</label>
+                        <input type="text" id="editMemberPhone" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Department</label>
+                        <input type="text" id="editMemberDept" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('editMemberModal')" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-purple-600 rounded-xl hover:bg-purple-700 transition">Update Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Member History Modal -->
+    <div id="memberHistoryModal" class="modal fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 id="historyMemberName" class="font-bold text-slate-900 text-lg">Member Transaction History</h3>
+                <button onclick="closeModal('memberHistoryModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="historyMemberDetail" class="text-xs text-slate-500"></div>
+            <h4 class="font-semibold text-slate-700 text-sm">Transaction History</h4>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500">
+                        <tr>
+                            <th class="px-4 py-3">#ID</th>
+                            <th class="px-4 py-3">Book Title</th>
+                            <th class="px-4 py-3">Issue Date</th>
+                            <th class="px-4 py-3">Due Date</th>
+                            <th class="px-4 py-3">Return Date</th>
+                            <th class="px-4 py-3">Fine</th>
+                            <th class="px-4 py-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTransactionsTable" class="divide-y divide-slate-100">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Dialog Modal -->
+    <div id="confirmModal" class="modal fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center">
+            <div class="flex justify-center">
+                <i class="fa-solid fa-triangle-exclamation text-rose-500 text-4xl"></i>
+            </div>
+            <h3 id="confirmTitle" class="font-bold text-slate-900 text-lg">Confirm Action</h3>
+            <p id="confirmMessage" class="text-sm text-slate-600">Are you sure?</p>
+            <div class="flex justify-center space-x-3 pt-2">
+                <button onclick="closeModal('confirmModal')" class="px-5 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition">Cancel</button>
+                <button id="confirmBtn" onclick="confirmAction()" class="px-5 py-2 text-xs font-semibold text-white bg-rose-600 rounded-xl hover:bg-rose-700 transition">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="authModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden">
+        <form id="authForm" class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+            <div>
+                <h3 class="font-bold text-slate-900 text-lg">Librarian sign in</h3>
+                <p class="text-sm text-slate-500 mt-1">Sign in to access library records and operations.</p>
+            </div>
+            <label class="block text-sm font-medium text-slate-700">Username
+                <input id="authUsername" autocomplete="username" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2">
+            </label>
+            <label class="block text-sm font-medium text-slate-700">Password
+                <input id="authPassword" type="password" autocomplete="current-password" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2">
+            </label>
+            <p id="authError" class="text-sm text-rose-600 hidden" role="alert"></p>
+            <button type="submit" class="w-full px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">Sign in</button>
+            <p class="text-xs text-slate-400">Demo: admin / admin123 or librarian / library123</p>
+        </form>
+    </div>
+
+    <div id="bookCodeModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center">
+            <h3 id="bookCodeTitle" class="font-bold text-slate-900 text-lg mb-3">Book code</h3>
+            <img id="bookCodeImage" alt="Scannable book QR code or barcode" class="mx-auto max-w-full">
+            <p id="bookCodeValue" class="font-mono text-sm text-slate-500 mt-3"></p>
+            <button onclick="closeModal('bookCodeModal')" class="mt-4 px-4 py-2 bg-slate-100 rounded-lg text-sm font-semibold">Close</button>
+        </div>
+    </div>
+
+    <!-- Loading Spinner Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm z-[60] hidden items-center justify-center">
+        <div class="w-12 h-12 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2 z-50 transition-all duration-300 transform translate-y-20 opacity-0">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMessage">Action completed</span>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

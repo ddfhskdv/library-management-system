@@ -1,0 +1,7 @@
+{
+  "task_id": "task-library-complete",
+  "task_description": "Complete the Library Management System from ~70% to 100%: fix critical bugs, add missing backend features (fine payment, member history, book popularity, renewals, category list, max-books enforcement, springdoc), and build all missing frontend UI (edit member modal, member history, fine payment, return/renew buttons, overdue panel, popular books panel, transaction search, CSV export, dark mode, confirm dialogs, spinners, empty states, inline validation).",
+  "status": "pending",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
+  "blocked_reason": null
+}
